@@ -1,5 +1,3 @@
-// game.js
-
 const canvas = document.getElementById('soccerField');
 const ctx = canvas.getContext('2d');
 
@@ -31,7 +29,7 @@ const players = [
         y: canvasHeight - 150,
         width: 0,
         height: 0,
-        speed: 2,
+        speed: 2, // Reduced speed
         team: 'A',
         direction: { x: 0, y: -1 }, // Initial direction
         cooldown: 0
@@ -41,7 +39,7 @@ const players = [
         y: canvasHeight - 200,
         width: 0,
         height: 0,
-        speed: 2,
+        speed: 2, // Reduced speed
         team: 'A',
         direction: { x: 0, y: -1 }, // Initial direction
         cooldown: 0
@@ -59,8 +57,8 @@ let currentPlayerIndex = 0;
 const ball = {
     x: fieldWidth / 2,
     y: fieldHeight / 2,
-    width: 10,
-    height: 10,
+    width: 7,
+    height: 7,
     speed: 10,
     inControl: null,
     vx: 0,
@@ -126,7 +124,7 @@ window.addEventListener('keydown', (e) => {
     if (keys.hasOwnProperty(e.key)) {
         keys[e.key] = true;
     }
-    if (e.key === 'w') {
+    if (e.key === 'w' && ball.inControl === null) { // Check if the ball is in control
         switchPlayer();
     }
 });

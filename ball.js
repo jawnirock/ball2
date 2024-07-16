@@ -18,7 +18,7 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
             ball.vx = ball.speed * 0.7 * ball.inControl.direction.x; // Further reduced horizontal velocity
             ball.vy = ball.speed * 0.7 * ball.inControl.direction.y; // Further reduced horizontal velocity
             ball.vz = 3; // Initial upward velocity
-            ball.inControl.cooldown = 80; // Set cooldown period to two seconds (120 frames)
+            ball.inControl.cooldown = 120; // Set cooldown period to two seconds (120 frames)
             ball.inControl = null;
         }
 
@@ -27,7 +27,7 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
             ball.vx = ball.speed * 0.8 * ball.inControl.direction.x; // Further reduced horizontal velocity
             ball.vy = ball.speed * 0.8 * ball.inControl.direction.y; // Further reduced horizontal velocity
             ball.vz = 5; // Higher initial upward velocity
-            ball.inControl.cooldown = 80; // Set cooldown period to two seconds (120 frames)
+            ball.inControl.cooldown = 120; // Set cooldown period to two seconds (120 frames)
             ball.inControl = null;
         }
     } else {
@@ -87,8 +87,8 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
 // Update ball size based on y position for perspective effect
 function updateBallSize(ball, canvas) {
     const sizeFactor = 1 + (ball.y / canvas.height);
-    ball.width = 10 * sizeFactor;
-    ball.height = 10 * sizeFactor;
+    ball.width = 7 * sizeFactor;
+    ball.height = 7 * sizeFactor;
 }
 
 // Draw ball
