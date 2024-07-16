@@ -16,6 +16,11 @@ const fieldBottomWidth = fieldWidth - 2 * bottomMargin;
 const goalLineWidth = 2; // 20% of the white line width
 const goalLineLength = 50; // Length of the goal line
 
+// Scores
+let scoreTeamA = 0;
+let scoreTeamB = 0;
+let goalScored = false; // Flag to prevent multiple goals from being counted during the delay
+
 // Key press states
 const keys = {
     ArrowUp: false,
@@ -109,6 +114,9 @@ function drawField() {
 
     // Draw goal lines
     drawGoalLines();
+
+    // Draw scores
+    drawScores();
 }
 
 function drawGoalLines() {
@@ -157,6 +165,51 @@ function drawGoalLines() {
     ctx.stroke();
 }
 
+function drawScores() {
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '24px Arial';
+    ctx.fillText(`Team A: ${scoreTeamA}`, 10, 30);
+    ctx.fillText(`Team B: ${scoreTeamB}`, 10, 60);
+}
+
+function checkGoal() {
+    if (goalScored) return; // Prevent multiple goals from being counted during the delay
+
+    const fieldYStart = (canvasHeight - fieldHeight) / 2;
+
+    // Calculate positions for the goal lines based on the white lines
+    const leftGoalX = bottomMargin + 80;
+    const leftGoalY = fieldYStart + fieldHeight - 280;
+
+    const rightGoalX = fieldWidth - bottomMargin - 80;
+    const rightGoalY = fieldYStart + fieldHeight - 280;
+
+    if (ball.x > leftGoalX - goalLineWidth / 2 && ball.x < leftGoalX + goalLineWidth / 2 &&
+        ball.y > leftGoalY - goalLineLength / 2 && ball.y < leftGoalY + goalLineLength / 2) {
+        scoreTeamB++;
+        console.log("Goal for Team B!");
+        goalScored = true;
+        setTimeout(resetBall, 1000); // 1-second delay before resetting
+    } else if (ball.x > rightGoalX - goalLineWidth / 2 && ball.x < rightGoalX + goalLineWidth / 2 &&
+        ball.y > rightGoalY - goalLineLength / 2 && ball.y < rightGoalY + goalLineLength / 2) {
+        scoreTeamA++;
+        console.log("Goal for Team A!");
+        goalScored = true;
+        setTimeout(resetBall, 1000); // 1-second delay before resetting
+    }
+}
+
+function resetBall() {
+    ball.x = fieldWidth / 2;
+    ball.y = fieldHeight / 2 + 70;
+    ball.vx = 0;
+    ball.vy = 0;
+    ball.z = 0;
+    ball.vz = 0;
+    ball.inControl = null; // Release control of the ball
+    goalScored = false; // Allow goals to be counted again
+}
+
 // Game loop
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -169,6 +222,7 @@ function gameLoop() {
     });
     updateBall(ball, players, currentPlayerIndex, keys, canvas);
     drawBall(ctx, ball);
+    checkGoal();
     requestAnimationFrame(gameLoop);
 }
 
