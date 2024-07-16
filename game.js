@@ -28,7 +28,8 @@ const keys = {
     ArrowLeft: false,
     ArrowRight: false,
     s: false,
-    d: false
+    d: false,
+    a: false // Added for tackle
 };
 
 // Player objects
@@ -41,7 +42,8 @@ const players = [
         speed: 2, // Reduced speed
         team: 'A',
         direction: { x: 0, y: -1 }, // Initial direction
-        cooldown: 0
+        cooldown: 0,
+        color: '#00008B'
     },
     {
         x: fieldWidth / 2 + 100,
@@ -51,7 +53,8 @@ const players = [
         speed: 2, // Reduced speed
         team: 'A',
         direction: { x: 0, y: -1 }, // Initial direction
-        cooldown: 0
+        cooldown: 0,
+        color: '#00008B'
     },
     {
         x: fieldWidth / 2 - 100,
@@ -61,7 +64,8 @@ const players = [
         speed: 2, // Reduced speed
         team: 'B',
         direction: { x: 0, y: -1 }, // Initial direction
-        cooldown: 0
+        cooldown: 0,
+        color: '#8B0000'
     },
     {
         x: fieldWidth / 2 + 150,
@@ -71,7 +75,8 @@ const players = [
         speed: 2, // Reduced speed
         team: 'B',
         direction: { x: 0, y: -1 }, // Initial direction
-        cooldown: 0
+        cooldown: 0,
+        color: '#8B0000'
     }
 ];
 

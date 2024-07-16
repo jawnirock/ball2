@@ -15,6 +15,7 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
 
         // Handle pass (throw)
         if (keys.s) {
+            console.log("Passing the ball");
             ball.vx = ball.speed * 0.7 * ball.inControl.direction.x; // Further reduced horizontal velocity
             ball.vy = ball.speed * 0.7 * ball.inControl.direction.y; // Further reduced horizontal velocity
             ball.vz = 3; // Initial upward velocity
@@ -24,6 +25,7 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
 
         // Handle kick
         if (keys.d) {
+            console.log("Kicking the ball");
             ball.vx = ball.speed * 0.8 * ball.inControl.direction.x; // Further reduced horizontal velocity
             ball.vy = ball.speed * 0.8 * ball.inControl.direction.y; // Further reduced horizontal velocity
             ball.vz = 5; // Higher initial upward velocity
@@ -78,6 +80,47 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
                 }
             }
         });
+    }
+
+    // Handle tackle
+    if (keys.a) {
+        console.log("Attempting tackle");
+        const currentPlayer = players[currentPlayerIndex];
+
+        // Freeze and rotate the current player
+        if (!currentPlayer.rotated) {
+            currentPlayer.rotated = true;
+            currentPlayer.canMove = false;
+            setTimeout(() => {
+                currentPlayer.rotated = false;
+                currentPlayer.canMove = true;
+            }, 1000);
+        }
+
+        // Check if any B team player is in possession
+        const bPlayerInPossession = players.find(player => player.team === 'B' && ball.inControl === player);
+
+        if (!bPlayerInPossession) {
+            console.log("No B player in possession");
+        } else {
+            const distance = Math.hypot(bPlayerInPossession.x - currentPlayer.x, bPlayerInPossession.y - currentPlayer.y);
+            console.log("B player in possession, distance: " + distance);
+
+            if (distance < 40) {
+                console.log("Tackle within range, rotating opposition player");
+                bPlayerInPossession.rotated = true;
+                bPlayerInPossession.canMove = false;
+                setTimeout(() => {
+                    bPlayerInPossession.rotated = false;
+                    bPlayerInPossession.canMove = true;
+                }, 2000);
+
+                // Release the ball from the tackled player
+                ball.inControl = null;
+                ball.vx = currentPlayer.direction.x * 2;
+                ball.vy = currentPlayer.direction.y * 2;
+            }
+        }
     }
 
     // Update ball size based on y position for perspective effect

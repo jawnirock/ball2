@@ -2,23 +2,25 @@
 
 // Update player position
 function updatePlayer(player, keys, canvas) {
-    const prevX = player.x;
-    const prevY = player.y;
+    if (player.canMove !== false) {
+        const prevX = player.x;
+        const prevY = player.y;
 
-    if (keys.ArrowUp && player.y > 0) player.y -= player.speed;
-    if (keys.ArrowDown && player.y < canvas.height) player.y += player.speed;
-    if (keys.ArrowLeft && player.x > 0) player.x -= player.speed;
-    if (keys.ArrowRight && player.x < canvas.width) player.x += player.speed;
+        if (keys.ArrowUp && player.y > 0) player.y -= player.speed;
+        if (keys.ArrowDown && player.y < canvas.height) player.y += player.speed;
+        if (keys.ArrowLeft && player.x > 0) player.x -= player.speed;
+        if (keys.ArrowRight && player.x < canvas.width) player.x += player.speed;
 
-    // Update player size based on y position for perspective effect
-    updatePlayerSize(player, canvas);
+        // Update player size based on y position for perspective effect
+        updatePlayerSize(player, canvas);
 
-    // Update player direction
-    if (player.x !== prevX || player.y !== prevY) {
-        const dx = player.x - prevX;
-        const dy = player.y - prevY;
-        const length = Math.hypot(dx, dy);
-        player.direction = { x: dx / length, y: dy / length };
+        // Update player direction
+        if (player.x !== prevX || player.y !== prevY) {
+            const dx = player.x - prevX;
+            const dy = player.y - prevY;
+            const length = Math.hypot(dx, dy);
+            player.direction = { x: dx / length, y: dy / length };
+        }
     }
 }
 
@@ -31,11 +33,17 @@ function updatePlayerSize(player, canvas) {
 
 // Draw player
 function drawPlayer(ctx, player, isCurrentPlayer) {
-    ctx.fillStyle = player.team === 'A' ? '#00008B' : '#8B0000'; // Dark blue for Team A, Dark red for Team B
-    ctx.fillRect(player.x - player.width / 2, player.y - player.height, player.width, player.height);
+    ctx.save();
+    ctx.translate(player.x, player.y);
+    if (player.rotated) {
+        ctx.rotate(Math.PI / 2); // Rotate by 90 degrees
+    }
+    ctx.fillStyle = player.color || '#00008B'; // Use player color or default to dark blue
+    ctx.fillRect(-player.width / 2, -player.height, player.width, player.height);
+    ctx.restore();
 
     if (isCurrentPlayer) {
-        drawArrow(ctx, player, 'head');
+        drawArrow(ctx, player);
         drawDirectionArrow(ctx, player);
     }
 }
