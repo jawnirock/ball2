@@ -31,7 +31,7 @@ function updatePlayerSize(player, canvas) {
 
 // Draw player
 function drawPlayer(ctx, player, isCurrentPlayer) {
-    ctx.fillStyle = '#00008B'; // Dark blue color for the players
+    ctx.fillStyle = player.team === 'A' ? '#00008B' : '#8B0000'; // Dark blue for Team A, Dark red for Team B
     ctx.fillRect(player.x - player.width / 2, player.y - player.height, player.width, player.height);
 
     if (isCurrentPlayer) {

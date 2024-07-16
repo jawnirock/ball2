@@ -52,6 +52,26 @@ const players = [
         team: 'A',
         direction: { x: 0, y: -1 }, // Initial direction
         cooldown: 0
+    },
+    {
+        x: fieldWidth / 2 - 100,
+        y: canvasHeight - 250,
+        width: 0,
+        height: 0,
+        speed: 2, // Reduced speed
+        team: 'B',
+        direction: { x: 0, y: -1 }, // Initial direction
+        cooldown: 0
+    },
+    {
+        x: fieldWidth / 2 + 150,
+        y: canvasHeight - 300,
+        width: 0,
+        height: 0,
+        speed: 2, // Reduced speed
+        team: 'B',
+        direction: { x: 0, y: -1 }, // Initial direction
+        cooldown: 0
     }
 ];
 
@@ -231,7 +251,7 @@ window.addEventListener('keydown', (e) => {
     if (keys.hasOwnProperty(e.key)) {
         keys[e.key] = true;
     }
-    if (e.key === 'w' && ball.inControl === null) { // Check if the ball is in control
+    if (e.key === 'w' && (ball.inControl === null || ball.inControl.team === 'B')) { // Check if the ball is in control by Team B or not in control
         switchPlayer();
     }
 });
@@ -246,7 +266,9 @@ window.addEventListener('keyup', (e) => {
 // Switch to the next player
 function switchPlayer(newIndex = null) {
     if (newIndex === null) {
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+        do {
+            currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+        } while (players[currentPlayerIndex].team !== 'A');
     } else {
         currentPlayerIndex = newIndex;
     }
