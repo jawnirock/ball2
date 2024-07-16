@@ -2,25 +2,25 @@
 
 // Update player position
 function updatePlayer(player, keys, canvas) {
-    if (player.canMove !== false) {
-        const prevX = player.x;
-        const prevY = player.y;
+    if (!player.canMove) return; // Prevent movement if the player is frozen
 
-        if (keys.ArrowUp && player.y > 0) player.y -= player.speed;
-        if (keys.ArrowDown && player.y < canvas.height) player.y += player.speed;
-        if (keys.ArrowLeft && player.x > 0) player.x -= player.speed;
-        if (keys.ArrowRight && player.x < canvas.width) player.x += player.speed;
+    const prevX = player.x;
+    const prevY = player.y;
 
-        // Update player size based on y position for perspective effect
-        updatePlayerSize(player, canvas);
+    if (keys.ArrowUp && player.y > 0) player.y -= player.speed;
+    if (keys.ArrowDown && player.y < canvas.height) player.y += player.speed;
+    if (keys.ArrowLeft && player.x > 0) player.x -= player.speed;
+    if (keys.ArrowRight && player.x < canvas.width) player.x += player.speed;
 
-        // Update player direction
-        if (player.x !== prevX || player.y !== prevY) {
-            const dx = player.x - prevX;
-            const dy = player.y - prevY;
-            const length = Math.hypot(dx, dy);
-            player.direction = { x: dx / length, y: dy / length };
-        }
+    // Update player size based on y position for perspective effect
+    updatePlayerSize(player, canvas);
+
+    // Update player direction
+    if (player.x !== prevX || player.y !== prevY) {
+        const dx = player.x - prevX;
+        const dy = player.y - prevY;
+        const length = Math.hypot(dx, dy);
+        player.direction = { x: dx / length, y: dy / length };
     }
 }
 
@@ -33,17 +33,20 @@ function updatePlayerSize(player, canvas) {
 
 // Draw player
 function drawPlayer(ctx, player, isCurrentPlayer) {
-    ctx.save();
-    ctx.translate(player.x, player.y);
+    ctx.fillStyle = player.team === 'A' ? '#00008B' : '#8B0000'; // Dark blue for Team A, dark red for Team B
+
     if (player.rotated) {
-        ctx.rotate(Math.PI / 2); // Rotate by 90 degrees
+        ctx.save();
+        ctx.translate(player.x, player.y - player.height / 2);
+        ctx.rotate(Math.PI / 2);
+        ctx.fillRect(-player.width / 2, -player.height / 2, player.width, player.height);
+        ctx.restore();
+    } else {
+        ctx.fillRect(player.x - player.width / 2, player.y - player.height, player.width, player.height);
     }
-    ctx.fillStyle = player.color || '#00008B'; // Use player color or default to dark blue
-    ctx.fillRect(-player.width / 2, -player.height, player.width, player.height);
-    ctx.restore();
 
     if (isCurrentPlayer) {
-        drawArrow(ctx, player);
+        drawArrow(ctx, player, 'head');
         drawDirectionArrow(ctx, player);
     }
 }

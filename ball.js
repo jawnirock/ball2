@@ -14,7 +14,7 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
         ball.vz = 0;
 
         // Handle pass (throw)
-        if (keys.s) {
+        if (keys.s && ball.inControl.team === 'A') {
             console.log("Passing the ball");
             ball.vx = ball.speed * 0.7 * ball.inControl.direction.x; // Further reduced horizontal velocity
             ball.vy = ball.speed * 0.7 * ball.inControl.direction.y; // Further reduced horizontal velocity
@@ -24,7 +24,7 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
         }
 
         // Handle kick
-        if (keys.d) {
+        if (keys.d && ball.inControl.team === 'A') {
             console.log("Kicking the ball");
             ball.vx = ball.speed * 0.8 * ball.inControl.direction.x; // Further reduced horizontal velocity
             ball.vy = ball.speed * 0.8 * ball.inControl.direction.y; // Further reduced horizontal velocity
@@ -83,7 +83,7 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
     }
 
     // Handle tackle
-    if (keys.a) {
+    if (keys.a && !players.some(player => player.team === 'A' && ball.inControl === player)) {
         console.log("Attempting tackle");
         const currentPlayer = players[currentPlayerIndex];
 

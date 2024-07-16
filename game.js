@@ -29,54 +29,123 @@ const keys = {
     ArrowRight: false,
     s: false,
     d: false,
-    a: false // Added for tackle
+    a: false,
+    w: false
 };
 
 // Player objects
 const players = [
+    // Team A
     {
-        x: fieldWidth / 2,
+        x: fieldWidth / 4,
         y: canvasHeight - 150,
         width: 0,
         height: 0,
-        speed: 2, // Reduced speed
+        speed: 2,
         team: 'A',
-        direction: { x: 0, y: -1 }, // Initial direction
+        direction: { x: 0, y: -1 },
         cooldown: 0,
-        color: '#00008B'
+        canMove: true
     },
     {
-        x: fieldWidth / 2 + 100,
-        y: canvasHeight - 200,
-        width: 0,
-        height: 0,
-        speed: 2, // Reduced speed
-        team: 'A',
-        direction: { x: 0, y: -1 }, // Initial direction
-        cooldown: 0,
-        color: '#00008B'
-    },
-    {
-        x: fieldWidth / 2 - 100,
+        x: fieldWidth / 4,
         y: canvasHeight - 250,
         width: 0,
         height: 0,
-        speed: 2, // Reduced speed
-        team: 'B',
-        direction: { x: 0, y: -1 }, // Initial direction
+        speed: 2,
+        team: 'A',
+        direction: { x: 0, y: -1 },
         cooldown: 0,
-        color: '#8B0000'
+        canMove: true
     },
     {
-        x: fieldWidth / 2 + 150,
+        x: fieldWidth / 4 + 100,
+        y: canvasHeight - 200,
+        width: 0,
+        height: 0,
+        speed: 2,
+        team: 'A',
+        direction: { x: 0, y: -1 },
+        cooldown: 0,
+        canMove: true
+    },
+    {
+        x: fieldWidth / 4 - 100,
+        y: canvasHeight - 200,
+        width: 0,
+        height: 0,
+        speed: 2,
+        team: 'A',
+        direction: { x: 0, y: -1 },
+        cooldown: 0,
+        canMove: true
+    },
+    {
+        x: fieldWidth / 4,
         y: canvasHeight - 300,
         width: 0,
         height: 0,
-        speed: 2, // Reduced speed
-        team: 'B',
-        direction: { x: 0, y: -1 }, // Initial direction
+        speed: 2,
+        team: 'A',
+        direction: { x: 0, y: -1 },
         cooldown: 0,
-        color: '#8B0000'
+        canMove: true
+    },
+    // Team B
+    {
+        x: 3 * fieldWidth / 4,
+        y: canvasHeight - 150,
+        width: 0,
+        height: 0,
+        speed: 2,
+        team: 'B',
+        direction: { x: 0, y: -1 },
+        cooldown: 0,
+        canMove: true
+    },
+    {
+        x: 3 * fieldWidth / 4,
+        y: canvasHeight - 250,
+        width: 0,
+        height: 0,
+        speed: 2,
+        team: 'B',
+        direction: { x: 0, y: -1 },
+        cooldown: 0,
+        canMove: true
+    },
+    {
+        x: 3 * fieldWidth / 4 + 100,
+        y: canvasHeight - 200,
+        width: 0,
+        height: 0,
+        speed: 2,
+        team: 'B',
+        direction: { x: 0, y: -1 },
+        cooldown: 0,
+        canMove: true
+    },
+    {
+        x: 3 * fieldWidth / 4 - 100,
+        y: canvasHeight - 200,
+        width: 0,
+        height: 0,
+        speed: 2,
+        team: 'B',
+        direction: { x: 0, y: -1 },
+        cooldown: 0,
+        canMove: true
+    },
+    {
+        x: 3 * fieldWidth / 4,
+        y: canvasHeight - 300,
+        width: 0,
+        height: 0,
+        speed: 2,
+        team: 'B',
+        direction: { x: 0, y: -1 },
+        cooldown: 0,
+        canMove: true
     }
 ];
 
@@ -256,7 +325,7 @@ window.addEventListener('keydown', (e) => {
     if (keys.hasOwnProperty(e.key)) {
         keys[e.key] = true;
     }
-    if (e.key === 'w' && (ball.inControl === null || ball.inControl.team === 'B')) { // Check if the ball is in control by Team B or not in control
+    if (e.key === 'w' && ball.inControl === null && players[currentPlayerIndex].team === 'A') { // Check if the ball is in control and if it's team A player
         switchPlayer();
     }
 });
@@ -270,10 +339,13 @@ window.addEventListener('keyup', (e) => {
 
 // Switch to the next player
 function switchPlayer(newIndex = null) {
+    const teamAPlayers = players.filter(player => player.team === 'A');
+    const teamAIndices = players.map((player, index) => (player.team === 'A' ? index : -1)).filter(index => index !== -1);
+
     if (newIndex === null) {
-        do {
-            currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-        } while (players[currentPlayerIndex].team !== 'A');
+        const currentPlayerTeamAIndex = teamAIndices.indexOf(currentPlayerIndex);
+        const nextPlayerTeamAIndex = (currentPlayerTeamAIndex + 1) % teamAPlayers.length;
+        currentPlayerIndex = teamAIndices[nextPlayerTeamAIndex];
     } else {
         currentPlayerIndex = newIndex;
     }
