@@ -12,6 +12,10 @@ const bottomMargin = 50;
 const fieldTopWidth = fieldWidth - 2 * topMargin;
 const fieldBottomWidth = fieldWidth - 2 * bottomMargin;
 
+// Goal line dimensions
+const goalLineWidth = 2; // 20% of the white line width
+const goalLineLength = 50; // Length of the goal line
+
 // Key press states
 const keys = {
     ArrowUp: false,
@@ -56,7 +60,7 @@ let currentPlayerIndex = 0;
 // Ball object
 const ball = {
     x: fieldWidth / 2,
-    y: fieldHeight / 2,
+    y: fieldHeight / 2 + 70,
     width: 7,
     height: 7,
     speed: 10,
@@ -102,6 +106,55 @@ function drawField() {
         ctx.lineTo(topMargin + i * quarterWidthTop, fieldYStart);
         ctx.stroke();
     }
+
+    // Draw goal lines
+    drawGoalLines();
+}
+
+function drawGoalLines() {
+    ctx.strokeStyle = '#FF0000'; // Red color for goal lines
+    ctx.lineWidth = goalLineWidth;
+
+    const fieldYStart = (canvasHeight - fieldHeight) / 2;
+
+    // Calculate positions for the goal lines based on the white lines
+    const leftBottomX = bottomMargin + 80;
+    const leftBottomY = fieldYStart + fieldHeight - 280;
+    const leftTopX = topMargin;
+    const leftTopY = fieldYStart;
+
+    const rightBottomX = fieldWidth - bottomMargin - 80;
+    const rightBottomY = fieldYStart + fieldHeight - 280;
+    const rightTopX = fieldWidth - topMargin;
+    const rightTopY = fieldYStart;
+
+    // Angles for the left and right lines
+    const leftLineAngle = Math.atan2(leftTopY - leftBottomY, leftTopX - leftBottomX);
+    const rightLineAngle = Math.atan2(rightTopY - rightBottomY, rightTopX - rightBottomX);
+
+    // Draw left goal line
+    ctx.beginPath();
+    ctx.moveTo(
+        leftBottomX + goalLineLength * Math.cos(leftLineAngle),
+        leftBottomY + goalLineLength * Math.sin(leftLineAngle)
+    );
+    ctx.lineTo(
+        leftBottomX - goalLineLength * Math.cos(leftLineAngle),
+        leftBottomY - goalLineLength * Math.sin(leftLineAngle)
+    );
+    ctx.stroke();
+
+    // Draw right goal line
+    ctx.beginPath();
+    ctx.moveTo(
+        rightBottomX + goalLineLength * Math.cos(rightLineAngle),
+        rightBottomY + goalLineLength * Math.sin(rightLineAngle)
+    );
+    ctx.lineTo(
+        rightBottomX - goalLineLength * Math.cos(rightLineAngle),
+        rightBottomY - goalLineLength * Math.sin(rightLineAngle)
+    );
+    ctx.stroke();
 }
 
 // Game loop
