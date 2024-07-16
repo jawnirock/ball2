@@ -1,0 +1,12 @@
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #4CAF50; /* Green background to simulate a football field */
+}
+
+canvas {
+    border: 1px solid green;
+}
