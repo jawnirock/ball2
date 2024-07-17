@@ -128,7 +128,7 @@ function resetPlayers() {
         player.direction = { x: 0, y: -1 };
         updatePlayerSize(player, canvas); // Update player size based on perspective
     });
-    currentPlayerIndex = getClosestPlayerToBall();
+    currentPlayerIndex = getClosestPlayerToBall(); // Select closest player to the ball
 }
 
 // Function to get the closest player to the ball
@@ -148,8 +148,6 @@ function getClosestPlayerToBall() {
     return closestPlayerIndex;
 }
 
-
-
 // Modify the resetBall function to reset players as well
 function resetBall() {
     ball.x = fieldWidth / 2;
@@ -161,7 +159,6 @@ function resetBall() {
     ball.inControl = null; // Release control of the ball
     goalScored = false; // Allow goals to be counted again
     resetPlayers(); // Reset players to starting positions
-    switchPlayer();
 }
 
 // Game loop
@@ -185,7 +182,7 @@ window.addEventListener('keydown', (e) => {
     if (keys.hasOwnProperty(e.key)) {
         keys[e.key] = true;
     }
-    if (e.key === 'w' && (ball.inControl === null || ball.inControl.team === 'B')) { // Allow switching if the ball is not controlled or controlled by Team B
+    if (e.key === 'w' && (ball.inControl === null || ball.inControl.team !== 'A')) { // Check if the ball is in control and if it's team A player
         switchPlayer();
     }
 });
@@ -197,36 +194,17 @@ window.addEventListener('keyup', (e) => {
     }
 });
 
-// Switch to the closest player
-function switchPlayer() {
-    const closestPlayers = getTwoClosestPlayersToBall();
-    const closestPlayerIndex = closestPlayers[0] === currentPlayerIndex ? closestPlayers[1] : closestPlayers[0];
-    if (closestPlayerIndex !== -1) {
-        currentPlayerIndex = closestPlayerIndex;
+// Switch to the closest player to the ball
+function switchPlayer(newIndex = null) {
+    if (newIndex === null) {
+        currentPlayerIndex = getClosestPlayerToBall();
+    } else {
+        currentPlayerIndex = newIndex;
     }
 }
 
-// Get the indices of the two closest Team A players to the ball
-function getTwoClosestPlayersToBall() {
-    let closestPlayers = [-1, -1];
-    let closestDistances = [Infinity, Infinity];
+// Initial setup: Reset players and select the closest player to the ball
+resetPlayers();
 
-    players.forEach((player, index) => {
-        if (player.team === 'A') {
-            const distance = Math.hypot(player.x - ball.x, player.y - ball.y);
-            if (distance < closestDistances[0]) {
-                closestDistances[1] = closestDistances[0];
-                closestPlayers[1] = closestPlayers[0];
-                closestDistances[0] = distance;
-                closestPlayers[0] = index;
-            } else if (distance < closestDistances[1]) {
-                closestDistances[1] = distance;
-                closestPlayers[1] = index;
-            }
-        }
-    });
-
-    return closestPlayers;
-}
-
+// Start the game loop
 gameLoop();
