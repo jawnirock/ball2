@@ -185,12 +185,22 @@ function switchPlayer(newIndex = null) {
     } else {
         const closestPlayers = getTwoClosestPlayersToBall();
         if (closestPlayers.length < 2) return; // Ensure there are at least two players to switch between
+
         if (newIndex === null) {
-            // Always switch to the closest player first
+            // If newIndex is not provided, check and switch to the closest player first
+            if (lastSwitchedPlayerIndex >= 2 || lastSwitchedPlayerIndex < 0) {
+                lastSwitchedPlayerIndex = 0;
+            }
+        } else {
+            // If newIndex is provided, reset the lastSwitchedPlayerIndex
             lastSwitchedPlayerIndex = 0;
         }
+
         const closestPlayerIndex = closestPlayers[lastSwitchedPlayerIndex];
+        console.log(`Switching to player ${closestPlayerIndex} at index ${lastSwitchedPlayerIndex}, closest players: ${closestPlayers}`);
+
         lastSwitchedPlayerIndex = (lastSwitchedPlayerIndex + 1) % 2; // Toggle between 0 and 1
+
         if (closestPlayerIndex !== -1) {
             currentPlayerIndex = closestPlayerIndex;
         }
@@ -228,8 +238,6 @@ window.addEventListener('keydown', (e) => {
     if (e.key === 'w' && (ball.inControl === null || ball.inControl.team !== 'A')) {
         switchPlayer();
     }
-    // Log key press for debugging
-    console.log(`Key down: ${e.key}`, keys);
 });
 
 // Handle key up events
@@ -237,8 +245,6 @@ window.addEventListener('keyup', (e) => {
     if (keys.hasOwnProperty(e.key)) {
         keys[e.key] = false;
     }
-    // Log key release for debugging
-    console.log(`Key up: ${e.key}`, keys);
 });
 
 

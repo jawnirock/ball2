@@ -1,5 +1,3 @@
-// ai.js
-
 // Define player roles
 const playerRoles = {
     defenders: [],
@@ -22,14 +20,16 @@ console.log('Player roles:', playerRoles);
 
 // Function to initialize AI movements
 function initializeAIMovements() {
-    // Move midfielders and attackers of Team B 30 units to the left
-    playerRoles.midfielders.concat(playerRoles.attackers).forEach(player => {
-        if (player.team === 'B') {
-            player.x -= 30;
-            console.log(`Moved player ${player.team} to (${player.x}, ${player.y})`);
-        }
-    });
+    // Move midfielders and attackers of Team B 30 units to the left after 2 seconds
+    setTimeout(() => {
+        playerRoles.midfielders.concat(playerRoles.attackers).forEach(player => {
+            if (player.team === 'B') {
+                player.x -= 30;
+                console.log(`Moved player ${player.team} to (${player.x}, ${player.y})`);
+            }
+        });
+    }, 2000);
 }
 
-// Initialize AI movements immediately
+// Export the function to be used in game.js
 initializeAIMovements();
