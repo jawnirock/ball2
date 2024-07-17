@@ -97,26 +97,23 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
             }, 1000);
         }
 
-        // Check if any B team player is in possession
-        const bPlayerInPossession = players.find(player => player.team === 'B' && ball.inControl === player);
+        // Check if any B team player is within tackle range
+        const bPlayerInRange = players.find(player => player.team === 'B' && Math.hypot(player.x - currentPlayer.x, player.y - currentPlayer.y) < 40);
 
-        if (!bPlayerInPossession) {
-            console.log("No B player in possession");
+        if (!bPlayerInRange) {
+            console.log("No B player in range");
         } else {
-            const distance = Math.hypot(bPlayerInPossession.x - currentPlayer.x, bPlayerInPossession.y - currentPlayer.y);
-            console.log("B player in possession, distance: " + distance);
+            console.log("Tackle within range, rotating opposition player");
+            bPlayerInRange.rotated = true;
+            bPlayerInRange.canMove = false;
+            bPlayerInRange.cooldown = 200; // Increased cooldown period to ensure the player loses control
+            setTimeout(() => {
+                bPlayerInRange.rotated = false;
+                bPlayerInRange.canMove = true;
+            }, 2000);
 
-            if (distance < 40) {
-                console.log("Tackle within range, rotating opposition player");
-                bPlayerInPossession.rotated = true;
-                bPlayerInPossession.canMove = false;
-                bPlayerInPossession.cooldown = 200; // Increased cooldown period to ensure the player loses control
-                setTimeout(() => {
-                    bPlayerInPossession.rotated = false;
-                    bPlayerInPossession.canMove = true;
-                }, 2000);
-
-                // Release the ball from the tackled player
+            if (ball.inControl === bPlayerInRange) {
+                // Release the ball from the tackled player if they have it
                 ball.inControl = null;
                 ball.vx = currentPlayer.direction.x * 2;
                 ball.vy = currentPlayer.direction.y * 2;
