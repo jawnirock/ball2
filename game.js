@@ -149,8 +149,27 @@ function getClosestPlayerToBall() {
 
     return closestPlayerIndex;
 }
+// game.js
 
-// Modify the resetBall function to reset players as well
+// Function to reset players to their starting positions
+function resetPlayers() {
+    players.forEach((player, index) => {
+        player.x = startingPositions[index].x;
+        player.y = startingPositions[index].y;
+        player.canMove = true;
+        player.cooldown = 0;
+        player.moving = false; // Ensure players are not moving initially
+        player.chasing = false;
+        player.chaseTime = 0;
+        player.direction = { x: 0, y: -1 };
+        updatePlayerSize(player, canvas); // Update player size based on perspective
+    });
+    currentPlayerIndex = getClosestPlayerToBall(); // Select closest player to the ball
+    chasingPlayers.a = [];
+    chasingPlayers.b = [];
+}
+
+// Function to reset the ball to its starting position
 function resetBall() {
     ball.x = fieldWidth / 2;
     ball.y = fieldHeight / 2 + 70;
@@ -161,13 +180,18 @@ function resetBall() {
     ball.inControl = null; // Release control of the ball
     goalScored = false; // Allow goals to be counted again
     resetPlayers(); // Reset players to starting positions
+    initializeAIMovements(players, fieldWidth); // Reinitialize AI movements
 }
 
 // Game loop
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawField();
-    updateAIMovements(players, ball, currentPlayerIndex, startingPositions);
+
+    if (firstMoveMade) {
+        updateAIMovements(players, currentPlayerIndex, ball); // Call AI update only if the first move has been made
+    }
+
     players.forEach((player, index) => {
         if (index === currentPlayerIndex) {
             updatePlayer(player, keys, canvas);
@@ -236,9 +260,24 @@ function getTwoClosestPlayersToBall() {
 window.addEventListener('keydown', (e) => {
     if (keys.hasOwnProperty(e.key)) {
         keys[e.key] = true;
+
+        // Set firstMoveMade to true on the first move
+        if (!firstMoveMade) {
+            firstMoveMade = true;
+            initializeAIMovements(players, fieldWidth);
+        }
     }
     if (e.key === 'w' && (ball.inControl === null || ball.inControl.team !== 'a')) {
         switchPlayer();
+    }
+    // Handle tackle action
+    if (e.key === 'a') { // Assuming 'a' is the tackle key
+        const currentPlayer = players[currentPlayerIndex];
+        players.forEach(player => {
+            if (player.team !== currentPlayer.team) {
+                tacklePlayer(currentPlayer, player);
+            }
+        });
     }
 });
 
@@ -249,9 +288,8 @@ window.addEventListener('keyup', (e) => {
     }
 });
 
-// Initial setup: Reset players, initialize AI movements, and select the closest player to the ball
+// Initial setup: Reset players and select the closest player to the ball
 resetPlayers();
-initializeAIMovements();
 
 // Start the game loop
 gameLoop();

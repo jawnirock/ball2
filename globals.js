@@ -38,8 +38,6 @@ const keys = {
 };
 
 // Player objects
-// globals.js
-
 const startingPositions = [
     // Team A starting positions
     { team: "a", role: "defender", x: fieldWidth / 3 - 140, y: canvasHeight - 250 },
@@ -90,7 +88,8 @@ const players = startingPositions.map((pos, index) => ({
 
 let lastSwitchedPlayerIndex = 0;
 
-
+// Flag to track if the first move has been made
+let firstMoveMade = false;
 
 // Function to update player size based on y position for perspective effect
 function updatePlayerSize(player, canvas) {
