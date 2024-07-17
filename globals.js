@@ -38,340 +38,54 @@ const keys = {
 };
 
 // Player objects
-const players = [
-    // Team A
-    {
-        x: fieldWidth / 3,
-        y: canvasHeight - 350,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'A',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: fieldWidth / 3 - 10,
-        y: canvasHeight - 250,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'A',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: fieldWidth / 4 + 80,
-        y: canvasHeight - 140,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'A',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: fieldWidth / 4 + 120,
-        y: canvasHeight - 450,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'A',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: fieldWidth / 4 + 140,
-        y: canvasHeight - 530,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'A',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: fieldWidth / 3 - 130,
-        y: canvasHeight - 350,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'A',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: fieldWidth / 3 - 140,
-        y: canvasHeight - 250,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'A',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: fieldWidth / 4 - 50,
-        y: canvasHeight - 140,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'A',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: fieldWidth / 4 - 10,
-        y: canvasHeight - 450,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'A',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: fieldWidth / 4 + 10,
-        y: canvasHeight - 530,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'A',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: fieldWidth / 3 + 130,
-        y: canvasHeight - 350,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'A',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: fieldWidth / 3 + 120,
-        y: canvasHeight - 250,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'A',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: fieldWidth / 4 + 210,
-        y: canvasHeight - 140,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'A',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: fieldWidth / 4 + 250,
-        y: canvasHeight - 450,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'A',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: fieldWidth / 4 + 270,
-        y: canvasHeight - 530,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'A',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    // Team B
-    {
-        x: 2 * fieldWidth / 3,
-        y: canvasHeight - 350,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'B',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: 2 * fieldWidth / 3 + 10,
-        y: canvasHeight - 250,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'B',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: 3 * fieldWidth / 4 - 80,
-        y: canvasHeight - 140,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'B',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: 3 * fieldWidth / 4 - 120,
-        y: canvasHeight - 450,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'B',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: 3 * fieldWidth / 4 - 140,
-        y: canvasHeight - 530,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'B',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: 2 * fieldWidth / 3 + 130,
-        y: canvasHeight - 350,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'B',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: 2 * fieldWidth / 3 + 140,
-        y: canvasHeight - 250,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'B',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: 3 * fieldWidth / 4 + 50,
-        y: canvasHeight - 140,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'B',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: 3 * fieldWidth / 4 + 10,
-        y: canvasHeight - 450,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'B',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: 3 * fieldWidth / 4 - 10,
-        y: canvasHeight - 530,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'B',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: 2 * fieldWidth / 3 - 130,
-        y: canvasHeight - 350,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'B',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: 2 * fieldWidth / 3 - 140,
-        y: canvasHeight - 250,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'B',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: 3 * fieldWidth / 4 - 210,
-        y: canvasHeight - 140,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'B',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: 3 * fieldWidth / 4 - 250,
-        y: canvasHeight - 450,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'B',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    },
-    {
-        x: 3 * fieldWidth / 4 - 270,
-        y: canvasHeight - 530,
-        width: 0,
-        height: 0,
-        speed: 2,
-        team: 'B',
-        direction: { x: 0, y: -1 },
-        cooldown: 0,
-        canMove: true
-    }
+// globals.js
+
+const startingPositions = [
+    // Team A starting positions
+    { x: fieldWidth / 3, y: canvasHeight - 350 },
+    { x: fieldWidth / 3 - 10, y: canvasHeight - 250 },
+    { x: fieldWidth / 4 + 80, y: canvasHeight - 140 },
+    { x: fieldWidth / 4 + 120, y: canvasHeight - 450 },
+    { x: fieldWidth / 4 + 140, y: canvasHeight - 530 },
+    { x: fieldWidth / 3 - 130, y: canvasHeight - 350 },
+    { x: fieldWidth / 3 - 140, y: canvasHeight - 250 },
+    { x: fieldWidth / 4 - 50, y: canvasHeight - 140 },
+    { x: fieldWidth / 4 - 10, y: canvasHeight - 450 },
+    { x: fieldWidth / 4 + 10, y: canvasHeight - 530 },
+    { x: fieldWidth / 3 + 130, y: canvasHeight - 350 },
+    { x: fieldWidth / 3 + 120, y: canvasHeight - 250 },
+    { x: fieldWidth / 4 + 210, y: canvasHeight - 140 },
+    { x: fieldWidth / 4 + 250, y: canvasHeight - 450 },
+    { x: fieldWidth / 4 + 270, y: canvasHeight - 530 },
+    // Team B starting positions
+    { x: 2 * fieldWidth / 3, y: canvasHeight - 350 },
+    { x: 2 * fieldWidth / 3 + 10, y: canvasHeight - 250 },
+    { x: 3 * fieldWidth / 4 - 80, y: canvasHeight - 140 },
+    { x: 3 * fieldWidth / 4 - 120, y: canvasHeight - 450 },
+    { x: 3 * fieldWidth / 4 - 140, y: canvasHeight - 530 },
+    { x: 2 * fieldWidth / 3 + 130, y: canvasHeight - 350 },
+    { x: 2 * fieldWidth / 3 + 140, y: canvasHeight - 250 },
+    { x: 3 * fieldWidth / 4 + 50, y: canvasHeight - 140 },
+    { x: 3 * fieldWidth / 4 + 10, y: canvasHeight - 450 },
+    { x: 3 * fieldWidth / 4 - 10, y: canvasHeight - 530 },
+    { x: 2 * fieldWidth / 3 - 130, y: canvasHeight - 350 },
+    { x: 2 * fieldWidth / 3 - 140, y: canvasHeight - 250 },
+    { x: 3 * fieldWidth / 4 - 210, y: canvasHeight - 140 },
+    { x: 3 * fieldWidth / 4 - 250, y: canvasHeight - 450 },
+    { x: 3 * fieldWidth / 4 - 270, y: canvasHeight - 530 }
 ];
+
+const players = startingPositions.map((pos, index) => ({
+    x: pos.x,
+    y: pos.y,
+    width: 0,
+    height: 0,
+    speed: 2,
+    team: index < 15 ? 'A' : 'B',
+    direction: { x: 0, y: -1 },
+    cooldown: 0,
+    canMove: true
+}));
 
 
 

@@ -118,6 +118,39 @@ function checkGoal() {
     }
 }
 
+// Function to reset players to their starting positions
+function resetPlayers() {
+    players.forEach((player, index) => {
+        player.x = startingPositions[index].x;
+        player.y = startingPositions[index].y;
+        player.canMove = true;
+        player.cooldown = 0;
+        player.direction = { x: 0, y: -1 };
+        updatePlayerSize(player, canvas); // Update player size based on perspective
+    });
+    currentPlayerIndex = getClosestPlayerToBall();
+}
+
+// Function to get the closest player to the ball
+function getClosestPlayerToBall() {
+    const teamAPlayers = players.filter(player => player.team === 'A');
+    let closestPlayerIndex = null;
+    let closestDistance = Infinity;
+
+    teamAPlayers.forEach((player, index) => {
+        const distance = Math.hypot(player.x - ball.x, player.y - ball.y);
+        if (distance < closestDistance) {
+            closestDistance = distance;
+            closestPlayerIndex = players.indexOf(player);
+        }
+    });
+
+    return closestPlayerIndex;
+}
+
+
+
+// Modify the resetBall function to reset players as well
 function resetBall() {
     ball.x = fieldWidth / 2;
     ball.y = fieldHeight / 2 + 70;
@@ -127,9 +160,8 @@ function resetBall() {
     ball.vz = 0;
     ball.inControl = null; // Release control of the ball
     goalScored = false; // Allow goals to be counted again
-
-    // Set the closest player to the ball as the current player
-    currentPlayerIndex = getClosestPlayerToBallIndex();
+    resetPlayers(); // Reset players to starting positions
+    switchPlayer();
 }
 
 // Game loop
