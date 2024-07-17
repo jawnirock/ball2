@@ -127,6 +127,9 @@ function resetBall() {
     ball.vz = 0;
     ball.inControl = null; // Release control of the ball
     goalScored = false; // Allow goals to be counted again
+
+    // Set the closest player to the ball as the current player
+    currentPlayerIndex = getClosestPlayerToBallIndex();
 }
 
 // Game loop
@@ -150,7 +153,7 @@ window.addEventListener('keydown', (e) => {
     if (keys.hasOwnProperty(e.key)) {
         keys[e.key] = true;
     }
-    if (e.key === 'w' && ball.inControl === null && players[currentPlayerIndex].team === 'A') { // Check if the ball is in control and if it's team A player
+    if (e.key === 'w' && (ball.inControl === null || ball.inControl.team === 'B')) { // Allow switching if the ball is not controlled or controlled by Team B
         switchPlayer();
     }
 });
@@ -162,18 +165,36 @@ window.addEventListener('keyup', (e) => {
     }
 });
 
-// Switch to the next player
-function switchPlayer(newIndex = null) {
-    const teamAPlayers = players.filter(player => player.team === 'A');
-    const teamAIndices = players.map((player, index) => (player.team === 'A' ? index : -1)).filter(index => index !== -1);
-
-    if (newIndex === null) {
-        const currentPlayerTeamAIndex = teamAIndices.indexOf(currentPlayerIndex);
-        const nextPlayerTeamAIndex = (currentPlayerTeamAIndex + 1) % teamAPlayers.length;
-        currentPlayerIndex = teamAIndices[nextPlayerTeamAIndex];
-    } else {
-        currentPlayerIndex = newIndex;
+// Switch to the closest player
+function switchPlayer() {
+    const closestPlayers = getTwoClosestPlayersToBall();
+    const closestPlayerIndex = closestPlayers[0] === currentPlayerIndex ? closestPlayers[1] : closestPlayers[0];
+    if (closestPlayerIndex !== -1) {
+        currentPlayerIndex = closestPlayerIndex;
     }
+}
+
+// Get the indices of the two closest Team A players to the ball
+function getTwoClosestPlayersToBall() {
+    let closestPlayers = [-1, -1];
+    let closestDistances = [Infinity, Infinity];
+
+    players.forEach((player, index) => {
+        if (player.team === 'A') {
+            const distance = Math.hypot(player.x - ball.x, player.y - ball.y);
+            if (distance < closestDistances[0]) {
+                closestDistances[1] = closestDistances[0];
+                closestPlayers[1] = closestPlayers[0];
+                closestDistances[0] = distance;
+                closestPlayers[0] = index;
+            } else if (distance < closestDistances[1]) {
+                closestDistances[1] = distance;
+                closestPlayers[1] = index;
+            }
+        }
+    });
+
+    return closestPlayers;
 }
 
 gameLoop();
