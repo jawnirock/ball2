@@ -4,6 +4,7 @@
 const gravity = 0.2; // Gravity force
 const bounceFactor = 0.7; // Energy retained after bounce
 
+
 // Update ball position and handle player interaction
 function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
     if (ball.inControl) {
@@ -15,34 +16,76 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
 
         // Handle pass (throw)
         if (keys.s && ball.inControl.team === 'A') {
-            console.log("Passing the ball");
-            ball.vx = ball.speed * 0.7 * ball.inControl.direction.x; // Further reduced horizontal velocity
-            ball.vy = ball.speed * 0.7 * ball.inControl.direction.y; // Further reduced horizontal velocity
-            ball.vz = 3; // Initial upward velocity
-            ball.inControl.cooldown = 120; // Set cooldown period to two seconds (120 frames)
+            ball.vx = ball.speed * 0.7 * ball.inControl.direction.x;
+            ball.vy = ball.speed * 0.7 * ball.inControl.direction.y;
+            ball.vz = 3;
+            ball.inControl.cooldown = 120;
             ball.inControl = null;
+            lastSwitchedPlayerIndex = 0; // Reset the switch index when possession is lost
         }
 
         // Handle kick
         if (keys.d && ball.inControl.team === 'A') {
-            console.log("Kicking the ball");
-            ball.vx = ball.speed * 0.8 * ball.inControl.direction.x; // Further reduced horizontal velocity
-            ball.vy = ball.speed * 0.8 * ball.inControl.direction.y; // Further reduced horizontal velocity
-            ball.vz = 5; // Higher initial upward velocity
-            ball.inControl.cooldown = 120; // Set cooldown period to two seconds (120 frames)
+            ball.vx = ball.speed * 0.8 * ball.inControl.direction.x;
+            ball.vy = ball.speed * 0.8 * ball.inControl.direction.y;
+            ball.vz = 5;
+            ball.inControl.cooldown = 120;
             ball.inControl = null;
+            lastSwitchedPlayerIndex = 0; // Reset the switch index when possession is lost
         }
+        // Handle tackle
+        if (keys.a && !players.some(player => player.team === 'A' && ball.inControl === player)) {
+            console.log("Attempting tackle");
+            const currentPlayer = players[currentPlayerIndex];
+
+            // Freeze and rotate the current player
+            if (!currentPlayer.rotated) {
+                currentPlayer.rotated = true;
+                currentPlayer.canMove = false;
+                console.log("Player frozen and rotated:", currentPlayer);
+                setTimeout(() => {
+                    currentPlayer.rotated = false;
+                    currentPlayer.canMove = true;
+                    console.log("Player unfrozen and unrotated:", currentPlayer);
+                }, 1000);
+            }
+
+            // Check if any B team player is within tackle range
+            const bPlayerInRange = players.find(player => player.team === 'B' && Math.hypot(player.x - currentPlayer.x, player.y - currentPlayer.y) < 40);
+
+            if (!bPlayerInRange) {
+                console.log("No B player in range");
+            } else {
+                console.log("Tackle within range, rotating opposition player");
+                bPlayerInRange.rotated = true;
+                bPlayerInRange.canMove = false;
+                bPlayerInRange.cooldown = 200; // Increased cooldown period to ensure the player loses control
+                setTimeout(() => {
+                    bPlayerInRange.rotated = false;
+                    bPlayerInRange.canMove = true;
+                }, 2000);
+
+                if (ball.inControl === bPlayerInRange) {
+                    // Release the ball from the tackled player if they have it
+                    ball.inControl = null;
+                    ball.vx = currentPlayer.direction.x * 2;
+                    ball.vy = currentPlayer.direction.y * 2;
+                    console.log("Ball released from tackled player");
+                }
+            }
+        }
+
     } else {
         // Update ball position based on velocity
         ball.x += ball.vx;
         ball.y += ball.vy;
         ball.z += ball.vz;
-        ball.vz -= gravity; // Apply gravity
+        ball.vz -= gravity;
 
         // Bounce off the ground
         if (ball.z < 0) {
             ball.z = 0;
-            ball.vz *= -bounceFactor; // Reverse vertical velocity with bounce factor
+            ball.vz *= -bounceFactor;
         }
 
         // Bounce off the walls
@@ -124,10 +167,10 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
             }
         }
     }
-
     // Update ball size based on y position for perspective effect
     updateBallSize(ball, canvas);
 }
+
 
 // Draw ball
 function drawBall(ctx, ball) {

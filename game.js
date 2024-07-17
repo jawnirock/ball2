@@ -178,13 +178,17 @@ function gameLoop() {
 }
 
 // Function to switch between the two closest players to the ball
-function switchPlayer() {
+function switchPlayer(newIndex = null) {
     if (ball.inControl && ball.inControl.team === 'A') {
         // If the ball is controlled by a Team A player, select that player
         currentPlayerIndex = players.indexOf(ball.inControl);
     } else {
         const closestPlayers = getTwoClosestPlayersToBall();
         if (closestPlayers.length < 2) return; // Ensure there are at least two players to switch between
+        if (newIndex === null) {
+            // Always switch to the closest player first
+            lastSwitchedPlayerIndex = 0;
+        }
         const closestPlayerIndex = closestPlayers[lastSwitchedPlayerIndex];
         lastSwitchedPlayerIndex = (lastSwitchedPlayerIndex + 1) % 2; // Toggle between 0 and 1
         if (closestPlayerIndex !== -1) {
@@ -224,6 +228,8 @@ window.addEventListener('keydown', (e) => {
     if (e.key === 'w' && (ball.inControl === null || ball.inControl.team !== 'A')) {
         switchPlayer();
     }
+    // Log key press for debugging
+    console.log(`Key down: ${e.key}`, keys);
 });
 
 // Handle key up events
@@ -231,12 +237,17 @@ window.addEventListener('keyup', (e) => {
     if (keys.hasOwnProperty(e.key)) {
         keys[e.key] = false;
     }
+    // Log key release for debugging
+    console.log(`Key up: ${e.key}`, keys);
 });
 
 
 
-// Initial setup: Reset players and select the closest player to the ball
+
+
+// Initial setup: Reset players, initialize AI movements, and select the closest player to the ball
 resetPlayers();
+initializeAIMovements();
 
 // Start the game loop
 gameLoop();
