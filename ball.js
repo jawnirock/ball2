@@ -110,6 +110,7 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
                 console.log("Tackle within range, rotating opposition player");
                 bPlayerInPossession.rotated = true;
                 bPlayerInPossession.canMove = false;
+                bPlayerInPossession.cooldown = 200; // Increased cooldown period to ensure the player loses control
                 setTimeout(() => {
                     bPlayerInPossession.rotated = false;
                     bPlayerInPossession.canMove = true;
