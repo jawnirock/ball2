@@ -16,7 +16,8 @@ function updatePlayer(player, keys, canvas) {
     if (keys.ArrowLeft && player.x > 0) nextX -= player.speed;
     if (keys.ArrowRight && player.x < canvas.width) nextX += player.speed;
 
-    // Check for collisions with other players and adjust the position if needed
+    // Comment out the collision detection and resolution
+    /*
     const collision = checkPlayerCollision(player, nextX, nextY);
 
     if (!collision) {
@@ -32,6 +33,11 @@ function updatePlayer(player, keys, canvas) {
         collision.player.x -= collision.dx * dragSpeed;
         collision.player.y -= collision.dy * dragSpeed;
     }
+    */
+
+    // Temporarily set the position without checking for collisions
+    player.x = nextX;
+    player.y = nextY;
 
     // Update player size based on y position for perspective effect
     updatePlayerSize(player, canvas);
@@ -67,12 +73,14 @@ function drawPlayer(ctx, player, isCurrentPlayer) {
     }
 
     if (isCurrentPlayer) {
-        drawArrow(ctx, player, 'head');
+        drawArrow(ctx, player);
         drawDirectionArrow(ctx, player);
     }
 }
 
 // Check for player collision
+// Commenting out the collision detection function as well
+/*
 function checkPlayerCollision(currentPlayer, nextX, nextY) {
     const playerLeft = nextX - currentPlayer.width / 2;
     const playerRight = nextX + currentPlayer.width / 2;
@@ -102,6 +110,7 @@ function checkPlayerCollision(currentPlayer, nextX, nextY) {
 
     return null; // No collision
 }
+*/
 
 // Draw an arrow above the current player
 function drawArrow(ctx, player) {
