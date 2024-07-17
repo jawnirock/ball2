@@ -60,7 +60,7 @@ function updatePlayerSize(player, canvas) {
 
 // Draw player
 function drawPlayer(ctx, player, isCurrentPlayer) {
-    ctx.fillStyle = player.team === 'A' ? '#00008B' : '#8B0000'; // Dark blue for Team A, dark red for Team B
+    ctx.fillStyle = player.team === 'a' ? '#00008B' : '#8B0000'; // Dark blue for Team A, dark red for Team B
 
     if (player.rotated) {
         ctx.save();

@@ -15,7 +15,7 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
         ball.vz = 0;
 
         // Handle pass (throw)
-        if (keys.s && ball.inControl.team === 'A') {
+        if (keys.s && ball.inControl.team === 'a') {
             ball.vx = ball.speed * 0.7 * ball.inControl.direction.x;
             ball.vy = ball.speed * 0.7 * ball.inControl.direction.y;
             ball.vz = 3;
@@ -25,7 +25,7 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
         }
 
         // Handle kick
-        if (keys.d && ball.inControl.team === 'A') {
+        if (keys.d && ball.inControl.team === 'a') {
             ball.vx = ball.speed * 0.8 * ball.inControl.direction.x;
             ball.vy = ball.speed * 0.8 * ball.inControl.direction.y;
             ball.vz = 5;
@@ -34,29 +34,24 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
             lastSwitchedPlayerIndex = 0; // Reset the switch index when possession is lost
         }
         // Handle tackle
-        if (keys.a && !players.some(player => player.team === 'A' && ball.inControl === player)) {
-            console.log("Attempting tackle");
+        if (keys.a && !players.some(player => player.team === 'a' && ball.inControl === player)) {
             const currentPlayer = players[currentPlayerIndex];
 
             // Freeze and rotate the current player
             if (!currentPlayer.rotated) {
                 currentPlayer.rotated = true;
                 currentPlayer.canMove = false;
-                console.log("Player frozen and rotated:", currentPlayer);
                 setTimeout(() => {
                     currentPlayer.rotated = false;
                     currentPlayer.canMove = true;
-                    console.log("Player unfrozen and unrotated:", currentPlayer);
                 }, 1000);
             }
 
             // Check if any B team player is within tackle range
-            const bPlayerInRange = players.find(player => player.team === 'B' && Math.hypot(player.x - currentPlayer.x, player.y - currentPlayer.y) < 40);
+            const bPlayerInRange = players.find(player => player.team === 'b' && Math.hypot(player.x - currentPlayer.x, player.y - currentPlayer.y) < 40);
 
             if (!bPlayerInRange) {
-                console.log("No B player in range");
             } else {
-                console.log("Tackle within range, rotating opposition player");
                 bPlayerInRange.rotated = true;
                 bPlayerInRange.canMove = false;
                 bPlayerInRange.cooldown = 200; // Increased cooldown period to ensure the player loses control
@@ -70,7 +65,6 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
                     ball.inControl = null;
                     ball.vx = currentPlayer.direction.x * 2;
                     ball.vy = currentPlayer.direction.y * 2;
-                    console.log("Ball released from tackled player");
                 }
             }
         }
@@ -121,7 +115,7 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
             if ((distance < (player.width + ball.width) / 2 || (ball.x > playerLeft && ball.x < playerRight && ball.y > playerTop && ball.y < playerBottom)) && player.cooldown === 0) {
                 if (ball.z < 10) { // Allow control if ball is close to the ground
                     ball.inControl = player;
-                    if (player.team === 'A' && currentPlayerIndex !== index) {
+                    if (player.team === 'a' && currentPlayerIndex !== index) {
                         switchPlayer(index);
                     }
                 }
@@ -130,8 +124,7 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
     }
 
     // Handle tackle
-    if (keys.a && !players.some(player => player.team === 'A' && ball.inControl === player)) {
-        console.log("Attempting tackle");
+    if (keys.a && !players.some(player => player.team === 'a' && ball.inControl === player)) {
         const currentPlayer = players[currentPlayerIndex];
 
         // Freeze and rotate the current player
@@ -145,12 +138,10 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
         }
 
         // Check if any B team player is within tackle range
-        const bPlayerInRange = players.find(player => player.team === 'B' && Math.hypot(player.x - currentPlayer.x, player.y - currentPlayer.y) < 40);
+        const bPlayerInRange = players.find(player => player.team === 'b' && Math.hypot(player.x - currentPlayer.x, player.y - currentPlayer.y) < 40);
 
         if (!bPlayerInRange) {
-            console.log("No B player in range");
         } else {
-            console.log("Tackle within range, rotating opposition player");
             bPlayerInRange.rotated = true;
             bPlayerInRange.canMove = false;
             bPlayerInRange.cooldown = 200; // Increased cooldown period to ensure the player loses control

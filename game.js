@@ -133,7 +133,7 @@ function resetPlayers() {
 
 // Function to get the closest player to the ball
 function getClosestPlayerToBall() {
-    const teamAPlayers = players.filter(player => player.team === 'A');
+    const teamAPlayers = players.filter(player => player.team === 'a');
     let closestPlayerIndex = null;
     let closestDistance = Infinity;
 
@@ -179,7 +179,7 @@ function gameLoop() {
 
 // Function to switch between the two closest players to the ball
 function switchPlayer(newIndex = null) {
-    if (ball.inControl && ball.inControl.team === 'A') {
+    if (ball.inControl && ball.inControl.team === 'a') {
         // If the ball is controlled by a Team A player, select that player
         currentPlayerIndex = players.indexOf(ball.inControl);
     } else {
@@ -197,7 +197,6 @@ function switchPlayer(newIndex = null) {
         }
 
         const closestPlayerIndex = closestPlayers[lastSwitchedPlayerIndex];
-        console.log(`Switching to player ${closestPlayerIndex} at index ${lastSwitchedPlayerIndex}, closest players: ${closestPlayers}`);
 
         lastSwitchedPlayerIndex = (lastSwitchedPlayerIndex + 1) % 2; // Toggle between 0 and 1
 
@@ -213,7 +212,7 @@ function getTwoClosestPlayersToBall() {
     let closestDistances = [Infinity, Infinity];
 
     players.forEach((player, index) => {
-        if (player.team === 'A') {
+        if (player.team === 'a') {
             const distance = Math.hypot(player.x - ball.x, player.y - ball.y);
             if (distance < closestDistances[0]) {
                 closestDistances[1] = closestDistances[0];
@@ -235,7 +234,7 @@ window.addEventListener('keydown', (e) => {
     if (keys.hasOwnProperty(e.key)) {
         keys[e.key] = true;
     }
-    if (e.key === 'w' && (ball.inControl === null || ball.inControl.team !== 'A')) {
+    if (e.key === 'w' && (ball.inControl === null || ball.inControl.team !== 'a')) {
         switchPlayer();
     }
 });
