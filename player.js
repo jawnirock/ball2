@@ -24,13 +24,6 @@ function updatePlayer(player, keys, canvas) {
     }
 }
 
-// Update player size based on y position for perspective effect
-function updatePlayerSize(player, canvas) {
-    const sizeFactor = 1 + (player.y / canvas.height);
-    player.width = 15 * sizeFactor;
-    player.height = 28 * sizeFactor;
-}
-
 // Draw player
 function drawPlayer(ctx, player, isCurrentPlayer) {
     ctx.fillStyle = player.team === 'A' ? '#00008B' : '#8B0000'; // Dark blue for Team A, dark red for Team B

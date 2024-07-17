@@ -59,6 +59,10 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
         ball.vx *= 0.98;
         ball.vy *= 0.98;
 
+        // Ensure the ball stops completely
+        if (Math.abs(ball.vx) < 0.1) ball.vx = 0;
+        if (Math.abs(ball.vy) < 0.1) ball.vy = 0;
+
         // Check if any player reaches the ball
         players.forEach((player, index) => {
             if (player.cooldown > 0) {
@@ -123,13 +127,6 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
 
     // Update ball size based on y position for perspective effect
     updateBallSize(ball, canvas);
-}
-
-// Update ball size based on y position for perspective effect
-function updateBallSize(ball, canvas) {
-    const sizeFactor = 1 + (ball.y / canvas.height);
-    ball.width = 7 * sizeFactor;
-    ball.height = 7 * sizeFactor;
 }
 
 // Draw ball
