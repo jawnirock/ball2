@@ -7,10 +7,31 @@ function updatePlayer(player, keys, canvas) {
     const prevX = player.x;
     const prevY = player.y;
 
-    if (keys.ArrowUp && player.y > 0) player.y -= player.speed;
-    if (keys.ArrowDown && player.y < canvas.height) player.y += player.speed;
-    if (keys.ArrowLeft && player.x > 0) player.x -= player.speed;
-    if (keys.ArrowRight && player.x < canvas.width) player.x += player.speed;
+    // Attempt to update player position based on key inputs
+    let nextX = player.x;
+    let nextY = player.y;
+
+    if (keys.ArrowUp && player.y > 0) nextY -= player.speed;
+    if (keys.ArrowDown && player.y < canvas.height) nextY += player.speed;
+    if (keys.ArrowLeft && player.x > 0) nextX -= player.speed;
+    if (keys.ArrowRight && player.x < canvas.width) nextX += player.speed;
+
+    // Check for collisions with other players and adjust the position if needed
+    const collision = checkPlayerCollision(player, nextX, nextY);
+
+    if (!collision) {
+        player.x = nextX;
+        player.y = nextY;
+    } else {
+        // Apply dragging effect
+        const dragSpeed = 0.05; // Reduced dragging speed for smoother effect
+        player.x += collision.dx * dragSpeed;
+        player.y += collision.dy * dragSpeed;
+
+        // Apply dragging effect to the collided player
+        collision.player.x -= collision.dx * dragSpeed;
+        collision.player.y -= collision.dy * dragSpeed;
+    }
 
     // Update player size based on y position for perspective effect
     updatePlayerSize(player, canvas);
@@ -22,6 +43,13 @@ function updatePlayer(player, keys, canvas) {
         const length = Math.hypot(dx, dy);
         player.direction = { x: dx / length, y: dy / length };
     }
+}
+
+// Update player size based on y position for perspective effect
+function updatePlayerSize(player, canvas) {
+    const sizeFactor = 1 + (player.y / canvas.height);
+    player.width = 15 * sizeFactor;
+    player.height = 28 * sizeFactor;
 }
 
 // Draw player
@@ -42,6 +70,37 @@ function drawPlayer(ctx, player, isCurrentPlayer) {
         drawArrow(ctx, player, 'head');
         drawDirectionArrow(ctx, player);
     }
+}
+
+// Check for player collision
+function checkPlayerCollision(currentPlayer, nextX, nextY) {
+    const playerLeft = nextX - currentPlayer.width / 2;
+    const playerRight = nextX + currentPlayer.width / 2;
+    const playerTop = nextY - currentPlayer.height;
+    const playerBottom = nextY;
+
+    for (let i = 0; i < players.length; i++) {
+        const otherPlayer = players[i];
+        if (otherPlayer !== currentPlayer) {
+            const otherLeft = otherPlayer.x - otherPlayer.width / 2;
+            const otherRight = otherPlayer.x + otherPlayer.width / 2;
+            const otherTop = otherPlayer.y - otherPlayer.height;
+            const otherBottom = otherPlayer.y;
+
+            if (
+                playerRight > otherLeft &&
+                playerLeft < otherRight &&
+                playerBottom > otherTop &&
+                playerTop < otherBottom
+            ) {
+                const dx = nextX - otherPlayer.x;
+                const dy = nextY - otherPlayer.y;
+                return { player: otherPlayer, dx, dy }; // Collision detected, return the other player and direction
+            }
+        }
+    }
+
+    return null; // No collision
 }
 
 // Draw an arrow above the current player
