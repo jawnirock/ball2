@@ -1,3 +1,5 @@
+// game.js
+
 // Draw outer lines with perspective
 function drawField() {
     const fieldYStart = (canvasHeight - fieldHeight) / 2;
@@ -165,6 +167,7 @@ function resetBall() {
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawField();
+    updateAIMovements(players, ball, currentPlayerIndex, startingPositions);
     players.forEach((player, index) => {
         if (index === currentPlayerIndex) {
             updatePlayer(player, keys, canvas);
@@ -245,10 +248,6 @@ window.addEventListener('keyup', (e) => {
         keys[e.key] = false;
     }
 });
-
-
-
-
 
 // Initial setup: Reset players, initialize AI movements, and select the closest player to the ball
 resetPlayers();

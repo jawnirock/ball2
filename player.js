@@ -16,25 +16,6 @@ function updatePlayer(player, keys, canvas) {
     if (keys.ArrowLeft && player.x > 0) nextX -= player.speed;
     if (keys.ArrowRight && player.x < canvas.width) nextX += player.speed;
 
-    // Comment out the collision detection and resolution
-    /*
-    const collision = checkPlayerCollision(player, nextX, nextY);
-
-    if (!collision) {
-        player.x = nextX;
-        player.y = nextY;
-    } else {
-        // Apply dragging effect
-        const dragSpeed = 0.05; // Reduced dragging speed for smoother effect
-        player.x += collision.dx * dragSpeed;
-        player.y += collision.dy * dragSpeed;
-
-        // Apply dragging effect to the collided player
-        collision.player.x -= collision.dx * dragSpeed;
-        collision.player.y -= collision.dy * dragSpeed;
-    }
-    */
-
     // Temporarily set the position without checking for collisions
     player.x = nextX;
     player.y = nextY;
@@ -77,40 +58,6 @@ function drawPlayer(ctx, player, isCurrentPlayer) {
         drawDirectionArrow(ctx, player);
     }
 }
-
-// Check for player collision
-// Commenting out the collision detection function as well
-/*
-function checkPlayerCollision(currentPlayer, nextX, nextY) {
-    const playerLeft = nextX - currentPlayer.width / 2;
-    const playerRight = nextX + currentPlayer.width / 2;
-    const playerTop = nextY - currentPlayer.height;
-    const playerBottom = nextY;
-
-    for (let i = 0; i < players.length; i++) {
-        const otherPlayer = players[i];
-        if (otherPlayer !== currentPlayer) {
-            const otherLeft = otherPlayer.x - otherPlayer.width / 2;
-            const otherRight = otherPlayer.x + otherPlayer.width / 2;
-            const otherTop = otherPlayer.y - otherPlayer.height;
-            const otherBottom = otherPlayer.y;
-
-            if (
-                playerRight > otherLeft &&
-                playerLeft < otherRight &&
-                playerBottom > otherTop &&
-                playerTop < otherBottom
-            ) {
-                const dx = nextX - otherPlayer.x;
-                const dy = nextY - otherPlayer.y;
-                return { player: otherPlayer, dx, dy }; // Collision detected, return the other player and direction
-            }
-        }
-    }
-
-    return null; // No collision
-}
-*/
 
 // Draw an arrow above the current player
 function drawArrow(ctx, player) {
