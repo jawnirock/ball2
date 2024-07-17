@@ -87,6 +87,7 @@ const players = startingPositions.map((pos, index) => ({
     canMove: true
 }));
 
+let lastSwitchedPlayerIndex = 0;
 
 
 

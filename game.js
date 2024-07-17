@@ -177,12 +177,51 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 
+// Function to switch between the two closest players to the ball
+function switchPlayer() {
+    if (ball.inControl && ball.inControl.team === 'A') {
+        // If the ball is controlled by a Team A player, select that player
+        currentPlayerIndex = players.indexOf(ball.inControl);
+    } else {
+        const closestPlayers = getTwoClosestPlayersToBall();
+        if (closestPlayers.length < 2) return; // Ensure there are at least two players to switch between
+        const closestPlayerIndex = closestPlayers[lastSwitchedPlayerIndex];
+        lastSwitchedPlayerIndex = (lastSwitchedPlayerIndex + 1) % 2; // Toggle between 0 and 1
+        if (closestPlayerIndex !== -1) {
+            currentPlayerIndex = closestPlayerIndex;
+        }
+    }
+}
+
+// Get the indices of the two closest Team A players to the ball
+function getTwoClosestPlayersToBall() {
+    let closestPlayers = [-1, -1];
+    let closestDistances = [Infinity, Infinity];
+
+    players.forEach((player, index) => {
+        if (player.team === 'A') {
+            const distance = Math.hypot(player.x - ball.x, player.y - ball.y);
+            if (distance < closestDistances[0]) {
+                closestDistances[1] = closestDistances[0];
+                closestPlayers[1] = closestPlayers[0];
+                closestDistances[0] = distance;
+                closestPlayers[0] = index;
+            } else if (distance < closestDistances[1]) {
+                closestDistances[1] = distance;
+                closestPlayers[1] = index;
+            }
+        }
+    });
+
+    return closestPlayers;
+}
+
 // Handle key down events
 window.addEventListener('keydown', (e) => {
     if (keys.hasOwnProperty(e.key)) {
         keys[e.key] = true;
     }
-    if (e.key === 'w' && (ball.inControl === null || ball.inControl.team !== 'A')) { // Check if the ball is in control and if it's team A player
+    if (e.key === 'w' && (ball.inControl === null || ball.inControl.team !== 'A')) {
         switchPlayer();
     }
 });
@@ -194,14 +233,7 @@ window.addEventListener('keyup', (e) => {
     }
 });
 
-// Switch to the closest player to the ball
-function switchPlayer(newIndex = null) {
-    if (newIndex === null) {
-        currentPlayerIndex = getClosestPlayerToBall();
-    } else {
-        currentPlayerIndex = newIndex;
-    }
-}
+
 
 // Initial setup: Reset players and select the closest player to the ball
 resetPlayers();
