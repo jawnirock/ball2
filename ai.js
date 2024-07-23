@@ -51,11 +51,14 @@ function updateAIMovements(players, currentPlayerIndex, ball) {
 
             // Determine if the player should chase the ball
             const distanceToBall = Math.hypot(ball.x - player.x, ball.y - player.y);
-
-            if (distanceToBall <= chaseRadius && !player.chasing && player.team !== ball.inControl?.team) {
-                if (chasingPlayers[player.team].length < 3) {
-                    startChasing(player, ball);
+            if (!ball.inControl || ball.inControl.team !== player.team) {
+                if (distanceToBall <= chaseRadius && !player.chasing && player.team !== ball.inControl?.team) {
+                    if (chasingPlayers[player.team].length < 3) {
+                        startChasing(player, ball);
+                    }
                 }
+            } else {
+                stopChasing(player);
             }
 
             // Handle chasing logic
