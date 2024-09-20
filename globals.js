@@ -6,9 +6,11 @@ const canvas = document.getElementById('soccerField');
 const ctx = canvas.getContext('2d');
 
 // Field dimensions
-const fieldWidth = canvas.width;
-const fieldHeight = 500; // Updated field height
+const fieldWidth = canvas.width * 0.9;  // 90% of the canvas width
+const fieldHeight = 500; // Keep field height the same
 const canvasHeight = canvas.height;
+const canvasWidth = canvas.width; // Added canvasWidth to reference the full canvas width
+
 
 // Increased Perspective effect settings
 const topMargin = 200;
@@ -93,9 +95,8 @@ let firstMoveMade = false;
 
 // Function to update player size based on y position for perspective effect
 function updatePlayerSize(player, canvas) {
-    const sizeFactor = 1 + (player.y / canvas.height);
-    player.width = 15 * sizeFactor;
-    player.height = 28 * sizeFactor;
+    player.width = 15;
+    player.height = 28;
 }
 
 // Initialize player sizes based on perspective
@@ -119,9 +120,8 @@ const ball = {
 
 // Function to update ball size based on y position for perspective effect
 function updateBallSize(ball, canvas) {
-    const sizeFactor = 1 + (ball.y / canvas.height);
-    ball.width = 7 * sizeFactor;
-    ball.height = 7 * sizeFactor;
+    ball.width = 7;
+    ball.height = 7;
 }
 
 // Initialize ball size based on perspective

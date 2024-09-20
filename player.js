@@ -34,9 +34,8 @@ function updatePlayer(player, keys, canvas) {
 
 // Update player size based on y position for perspective effect
 function updatePlayerSize(player, canvas) {
-    const sizeFactor = 1 + (player.y / canvas.height);
-    player.width = 15 * sizeFactor;
-    player.height = 28 * sizeFactor;
+    player.width = 15;
+    player.height = 28;
 }
 
 // Draw player
