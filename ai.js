@@ -11,7 +11,7 @@ function initializeAIMovements(players, fieldWidth) {
         let targetX = player.x; // Default to the current position
 
         if (player.role === 'forward' || player.role === 'midfielder') {
-            const additionalDistance = -100 + Math.random() * 200; // Random number from -100 to 100
+            const additionalDistance = -50 + Math.random() * 300; // Random number from -100 to 100
             if (player.role === 'forward') {
                 if (player.team === 'a') {
                     targetX += fieldWidth / 4 + additionalDistance; // Move right for Team A attackers
@@ -43,8 +43,39 @@ function updateAIMovements(players, currentPlayerIndex, ball) {
                 return;
             }
 
+            // Logic for Team B defenders in control of the ball
+            if (ball.inControl === player && player.team === 'b' && player.role === 'defender') {
+                const { closestMidfielder, closestDistance } = getClosestMidfielder(player, players);
+                const maxPassDistance = 150;  // Define the max distance for a pass
+                
+                if (closestMidfielder) {
+                    // Calculate the direction towards the closest midfielder
+                    const dx = closestMidfielder.x - player.x;
+                    const dy = closestMidfielder.y - player.y;
+
+                    // If the closest midfielder is within passing distance
+                    if (closestDistance <= maxPassDistance) {
+                        // Normalize the direction and use the pass speed
+                        const distance = Math.hypot(dx, dy);
+                        ball.vx = ball.speed * 0.7 * (dx / distance);  // Mostly in X-axis but considers diagonal
+                        ball.vy = ball.speed * 0.7 * (dy / distance);  // Allows for vertical movement if needed
+                        ball.vz = 3;  // Pass has a moderate vertical arc
+                        ball.inControl = null;
+                        player.cooldown = 120;  // Prevent immediate actions after passing
+                    } else {
+                        // If no midfielder is close enough, defender kicks the ball along the X-axis
+                        ball.vx = ball.speed * 1.0 * Math.sign(dx);  // Kick in the X direction towards midfield
+                        ball.vy = 0;  // No vertical movement for the kick
+                        ball.vz = 5;  // Kick has a higher arc
+                        ball.inControl = null;
+                        player.cooldown = 120;  // Prevent immediate actions after kicking
+                    }
+                }
+                return;  // End movement updates once the defender has acted
+            }
+
             // Determine the chase radius based on the player role
-            let chaseRadius = player.width * 4;
+            let chaseRadius = player.width * 6;
             if (player.role === 'midfielder') {
                 chaseRadius = player.width * 8;
             }
@@ -147,3 +178,21 @@ function rotateAndFreezePlayer(player, duration) {
         player.canMove = true;
     }, duration);
 }
+
+function getClosestMidfielder(player, players) {
+    let closestMidfielder = null;
+    let closestDistance = Infinity;
+
+    players.forEach(p => {
+        if (p.team === player.team && p.role === 'midfielder') {
+            const distance = Math.hypot(p.x - player.x, p.y - player.y);
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestMidfielder = p;
+            }
+        }
+    });
+
+    return { closestMidfielder, closestDistance };
+}
+
