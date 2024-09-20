@@ -39,41 +39,58 @@ const keys = {
     w: false
 };
 
+
+// Player objects
+// globals.js
+
 // Player objects
 const startingPositions = [
-    // Team A starting positions
-    { team: "a", role: "defender", x: fieldWidth / 3 - 140, y: canvasHeight - 250 },
-    { team: "a", role: "defender", x: fieldWidth / 3 - 130, y: canvasHeight - 350 },
-    { team: "a", role: "defender", x: fieldWidth / 4 - 50, y: canvasHeight - 140 },
-    { team: "a", role: "defender", x: fieldWidth / 4 - 10, y: canvasHeight - 450 },
-    { team: "a", role: "defender", x: fieldWidth / 4 + 10, y: canvasHeight - 530 },
-    { team: "a", role: "midfielder", x: fieldWidth / 3, y: canvasHeight - 350 },
-    { team: "a", role: "midfielder", x: fieldWidth / 3 - 10, y: canvasHeight - 250 },
-    { team: "a", role: "midfielder", x: fieldWidth / 4 + 80, y: canvasHeight - 140 },
-    { team: "a", role: "midfielder", x: fieldWidth / 4 + 120, y: canvasHeight - 450 },
-    { team: "a", role: "midfielder", x: fieldWidth / 4 + 140, y: canvasHeight - 530 },
-    { team: "a", role: "forward", x: fieldWidth / 3 + 130, y: canvasHeight - 350 },
-    { team: "a", role: "forward", x: fieldWidth / 3 + 120, y: canvasHeight - 250 },
-    { team: "a", role: "forward", x: fieldWidth / 4 + 210, y: canvasHeight - 140 },
-    { team: "a", role: "forward", x: fieldWidth / 4 + 250, y: canvasHeight - 450 },
-    { team: "a", role: "forward", x: fieldWidth / 4 + 270, y: canvasHeight - 530 },
-    // Team B starting positions
-    { team: "b", role: "defender", x: 2 * fieldWidth / 3 + 130, y: canvasHeight - 350 },
-    { team: "b", role: "defender", x: 2 * fieldWidth / 3 + 140, y: canvasHeight - 250 },
-    { team: "b", role: "defender", x: 3 * fieldWidth / 4 + 50, y: canvasHeight - 140 },
-    { team: "b", role: "defender", x: 3 * fieldWidth / 4 + 10, y: canvasHeight - 450 },
-    { team: "b", role: "defender", x: 3 * fieldWidth / 4 - 10, y: canvasHeight - 530 },
-    { team: "b", role: "midfielder", x: 2 * fieldWidth / 3, y: canvasHeight - 350 },
-    { team: "b", role: "midfielder", x: 2 * fieldWidth / 3 + 10, y: canvasHeight - 250 },
-    { team: "b", role: "midfielder", x: 3 * fieldWidth / 4 - 80, y: canvasHeight - 140 },
-    { team: "b", role: "midfielder", x: 3 * fieldWidth / 4 - 120, y: canvasHeight - 450 },
-    { team: "b", role: "midfielder", x: 3 * fieldWidth / 4 - 140, y: canvasHeight - 530 },
-    { team: "b", role: "forward", x: 2 * fieldWidth / 3 - 130, y: canvasHeight - 350 },
-    { team: "b", role: "forward", x: 2 * fieldWidth / 3 - 140, y: canvasHeight - 250 },
-    { team: "b", role: "forward", x: 3 * fieldWidth / 4 - 210, y: canvasHeight - 140 },
-    { team: "b", role: "forward", x: 3 * fieldWidth / 4 - 250, y: canvasHeight - 450 },
-    { team: "b", role: "forward", x: 3 * fieldWidth / 4 - 270, y: canvasHeight - 530 }
+    // Team A starting positions (on the left side of the field)
+    // Defenders
+    { team: "a", role: "defender", x: fieldWidth * 0.153 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.25 + (canvasHeight - fieldHeight) / 2 },
+    { team: "a", role: "defender", x: fieldWidth * 0.152 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.4 + (canvasHeight - fieldHeight) / 2 },
+    { team: "a", role: "defender", x: fieldWidth * 0.153 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.55 + (canvasHeight - fieldHeight) / 2 },
+    { team: "a", role: "defender", x: fieldWidth * 0.155 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.7 + (canvasHeight - fieldHeight) / 2 },
+    { team: "a", role: "defender", x: fieldWidth * 0.151 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.85 + (canvasHeight - fieldHeight) / 2 },
+
+    // Midfielders
+    { team: "a", role: "midfielder", x: fieldWidth * 0.32 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.25 + (canvasHeight - fieldHeight) / 2 },
+    { team: "a", role: "midfielder", x: fieldWidth * 0.31 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.4 + (canvasHeight - fieldHeight) / 2 },
+    { team: "a", role: "midfielder", x: fieldWidth * 0.32 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.55 + (canvasHeight - fieldHeight) / 2 },
+    { team: "a", role: "midfielder", x: fieldWidth * 0.33 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.7 + (canvasHeight - fieldHeight) / 2 },
+    { team: "a", role: "midfielder", x: fieldWidth * 0.32 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.85 + (canvasHeight - fieldHeight) / 2 },
+
+    // Attackers
+    { team: "a", role: "forward", x: fieldWidth * 0.453 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.25 + (canvasHeight - fieldHeight) / 2 },
+    { team: "a", role: "forward", x: fieldWidth * 0.452 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.4 + (canvasHeight - fieldHeight) / 2 },
+    { team: "a", role: "forward", x: fieldWidth * 0.453 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.55 + (canvasHeight - fieldHeight) / 2 },
+    { team: "a", role: "forward", x: fieldWidth * 0.452 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.7 + (canvasHeight - fieldHeight) / 2 },
+    { team: "a", role: "forward", x: fieldWidth * 0.451 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.85 + (canvasHeight - fieldHeight) / 2 },
+
+    // Team B starting positions (on the right side of the field, mirrored)
+    // Defenders
+    { team: "b", role: "defender", x: fieldWidth * 0.852 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.25 + (canvasHeight - fieldHeight) / 2 },
+    { team: "b", role: "defender", x: fieldWidth * 0.853 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.4 + (canvasHeight - fieldHeight) / 2 },
+    { team: "b", role: "defender", x: fieldWidth * 0.855 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.55 + (canvasHeight - fieldHeight) / 2 },
+    { team: "b", role: "defender", x: fieldWidth * 0.854 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.7 + (canvasHeight - fieldHeight) / 2 },
+    { team: "b", role: "defender", x: fieldWidth * 0.851 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.85 + (canvasHeight - fieldHeight) / 2 },
+
+    // Midfielders
+    { team: "b", role: "midfielder", x: fieldWidth * 0.71 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.25 + (canvasHeight - fieldHeight) / 2 },
+    { team: "b", role: "midfielder", x: fieldWidth * 0.72 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.4 + (canvasHeight - fieldHeight) / 2 },
+    { team: "b", role: "midfielder", x: fieldWidth * 0.73 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.55 + (canvasHeight - fieldHeight) / 2 },
+    { team: "b", role: "midfielder", x: fieldWidth * 0.71 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.7 + (canvasHeight - fieldHeight) / 2 },
+    { team: "b", role: "midfielder", x: fieldWidth * 0.72 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.85 + (canvasHeight - fieldHeight) / 2 },
+
+    // Attackers
+    { team: "b", role: "forward", x: fieldWidth * 0.553 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.25 + (canvasHeight - fieldHeight) / 2 },
+    { team: "b", role: "forward", x: fieldWidth * 0.555 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.4 + (canvasHeight - fieldHeight) / 2 },
+    { team: "b", role: "forward", x: fieldWidth * 0.553 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.55 + (canvasHeight - fieldHeight) / 2 },
+    { team: "b", role: "forward", x: fieldWidth * 0.552 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.7 + (canvasHeight - fieldHeight) / 2 },
+    { team: "b", role: "forward", x: fieldWidth * 0.555 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.85 + (canvasHeight - fieldHeight) / 2 }
 ];
+
+
 
 const players = startingPositions.map((pos, index) => ({
     x: pos.x,
@@ -106,8 +123,8 @@ players.forEach(player => {
 
 // Ball object
 const ball = {
-    x: fieldWidth / 2,
-    y: fieldHeight / 2 + 70,
+    x: fieldWidth / 2 + (canvasWidth - fieldWidth) / 2,  // Center of the field horizontally
+    y: fieldHeight / 2 + (canvasHeight - fieldHeight) / 2,  // Center of the field vertically
     width: 7,
     height: 7,
     speed: 10,

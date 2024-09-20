@@ -139,16 +139,16 @@ function resetPlayers() {
 
 // Function to reset the ball to its starting position
 function resetBall() {
-    ball.x = fieldWidth / 2;
-    ball.y = fieldHeight / 2 + 70;
+    ball.x = fieldWidth / 2 + (canvasWidth - fieldWidth) / 2;  // Center horizontally
+    ball.y = fieldHeight / 2 + (canvasHeight - fieldHeight) / 2;  // Center vertically
     ball.vx = 0;
     ball.vy = 0;
     ball.z = 0;
     ball.vz = 0;
-    ball.inControl = null; // Release control of the ball
-    goalScored = false; // Allow goals to be counted again
-    resetPlayers(); // Reset players to starting positions
-    initializeAIMovements(players, fieldWidth); // Reinitialize AI movements
+    ball.inControl = null;  // Release control of the ball
+    goalScored = false;  // Allow goals to be counted again
+    resetPlayers();  // Reset players to starting positions
+    initializeAIMovements(players, fieldWidth);  // Reinitialize AI movements
 }
 
 // Game loop
