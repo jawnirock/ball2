@@ -1,10 +1,19 @@
 // player.js
 
+// player.js
+
 // Update player position and state
-function updatePlayer(player, keys, canvas) {
+function updatePlayer(player, keys, canvas, ball) {
     // If the player is tackling or has been tackled, do not change state to idle or update position
     if (player.tackleInProgress || player.state === "a_tackled" || player.state === "b_tackled") {
         return; // Skip further updates if the player is in the middle of tackling or being tackled
+    }
+
+    // Ensure player is not switching to idle/running if kicking, passing, or tackling
+    if (player.state === "a_kicking" || player.state === "b_kicking" ||
+        player.state === "a_passing" || player.state === "b_passing" ||
+        player.state === "a_tackling" || player.state === "b_tackling") {
+        return;  // Prevent changing state while these actions are in progress
     }
 
     if (!player.canMove) {
@@ -30,7 +39,7 @@ function updatePlayer(player, keys, canvas) {
     player.x = nextX;
     player.y = nextY;
 
-    // Set running state based on direction (left or right)
+    // Set running state based on direction (left or right), only if not in kicking, passing, or tackling state
     if (nextX < prevX) {
         player.state = player.team === "a" ? "a_running_left" : "b_running_left";
     } else if (nextX > prevX) {
@@ -38,7 +47,7 @@ function updatePlayer(player, keys, canvas) {
     }
 
     // If player isn't moving, set to idle (but only if not tackling or tackled)
-    if (nextX === prevX && nextY === prevY) {
+    if (nextX === prevX && nextY === prevY && player.state !== "a_tackling" && player.state !== "b_tackling") {
         player.state = player.team === "a" ? "a_idle" : "b_idle";
     }
 
@@ -54,49 +63,6 @@ function updatePlayer(player, keys, canvas) {
     }
 }
 
-// Handle tackling logic for user-controlled players
-function handleTackle(player, otherPlayers, ball, keys) {
-    if (keys.a && player.canMove) {
-        // Set state to "tackling" when user presses 'a'
-        player.state = player.team === 'a' ? "a_tackling" : "b_tackling";
-        player.tackleInProgress = true; // Mark tackle as in progress
-        player.canMove = false; // Prevent further movement while tackling
-
-        let opponentTackled = false; // Track whether an opponent is tackled
-
-        // Check if user tackles an opponent
-        otherPlayers.forEach(opponent => {
-            if (opponent.team !== player.team) {
-                const distance = Math.hypot(opponent.x - player.x, opponent.y - player.y);
-                if (distance < 30) {  // Tackle range
-                    opponentTackled = true;
-
-                    // Set opponent state to "tackled"
-                    opponent.state = opponent.team === 'a' ? "a_tackled" : "b_tackled";
-
-                    // Freeze both players temporarily, maintaining their states during the freeze
-                    freezePlayer(opponent, 2000, opponent.state); // Opponent stays in tackled state
-                    freezePlayer(player, 1000, player.state);     // Tackling player stays in tackling state
-
-                    // Release ball only if the opponent has possession
-                    if (ball.inControl === opponent) {
-                        ball.inControl = null;
-                        ball.vx = player.direction.x * 2;
-                        ball.vy = player.direction.y * 2;
-                    }
-                }
-            }
-        });
-
-        // If no opponent was tackled, the player still stays in "tackling" state until the duration ends
-        setTimeout(() => {
-            player.tackleInProgress = false; // End tackle state
-            player.canMove = true;
-            player.state = player.team === 'a' ? "a_idle" : "b_idle"; // Reset to idle after tackle attempt
-        }, 1000); // Reset after 1 second (tackle duration)
-    }
-}
-
 // Freeze a player temporarily and maintain their current state during the freeze
 function freezePlayer(player, duration, freezeState) {
     player.canMove = false;
@@ -106,9 +72,6 @@ function freezePlayer(player, duration, freezeState) {
         player.state = freezeState === "a_tackling" || freezeState === "b_tackling" ? freezeState : player.team === 'a' ? "a_idle" : "b_idle";
     }, duration);
 }
-
-
-
 
 // Draw player using sprite images based on state
 function drawPlayer(ctx, player, isCurrentPlayer) {
@@ -141,6 +104,7 @@ function drawPlayer(ctx, player, isCurrentPlayer) {
 
     ctx.restore();  // Restore the previous drawing state to avoid rotating other elements
 }
+
 
 
 // Draw an arrow above the current player

@@ -1,5 +1,3 @@
-// ball.js
-
 // Ball physics constants
 const gravity = 0.2; // Gravity force
 const bounceFactor = 0.7; // Energy retained after bounce
@@ -13,33 +11,43 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
         ball.z = 0;
         ball.vz = 0;
 
-        // Handle pass (throw) - for Team A
         if (keys.s && ball.inControl.team === 'a') {
-            ball.inControl.state = "a_passing";
+            ball.inControl.state = "a_passing";  // Set state to passing
             ball.vx = ball.speed * 0.7 * ball.inControl.direction.x;
             ball.vy = ball.speed * 0.7 * ball.inControl.direction.y;
             ball.vz = 3;
             ball.inControl.cooldown = 120;
-            ball.inControl = null;
-            lastSwitchedPlayerIndex = 0; // Reset the switch index when possession is lost
+            
+            // Return to idle after passing
+            const passedPlayer = ball.inControl;  // Keep a reference to the player
+            setTimeout(() => {
+                passedPlayer.state = passedPlayer.team === 'a' ? "a_idle" : "b_idle";  // Reset state after passing
+                passedPlayer.canMove = true;  // Allow movement after pass
+            }, 500);  // Set the duration for passing animation
+            ball.inControl = null;  // Release ball control
         }
 
         // Handle kick - for Team A
         if (keys.d && ball.inControl.team === 'a') {
-            ball.inControl.state = "a_kicking";
+            ball.inControl.state = "a_kicking";  // Set state to kicking
             ball.vx = ball.speed * 0.8 * ball.inControl.direction.x;
             ball.vy = ball.speed * 0.8 * ball.inControl.direction.y;
             ball.vz = 5;
             ball.inControl.cooldown = 120;
-            ball.inControl = null;
-            lastSwitchedPlayerIndex = 0; // Reset the switch index when possession is lost
+            
+            // Return to idle after kicking
+            const kickedPlayer = ball.inControl;  // Keep a reference to the player
+            setTimeout(() => {
+                kickedPlayer.state = kickedPlayer.team === 'a' ? "a_idle" : "b_idle";  // Reset state after kicking
+                kickedPlayer.canMove = true;  // Allow movement after kick
+            }, 500);  // Set the duration for kicking animation
+            ball.inControl = null;  // Release ball control
         }
 
         // Handle tackle
         if (keys.a && !players.some(player => player.team === 'a' && ball.inControl === player)) {
             handleTackle(players, currentPlayerIndex, ball);
         }
-
     } else {
         // Update ball position based on velocity
         ball.x += ball.vx;
@@ -136,6 +144,7 @@ function handleTackle(players, currentPlayerIndex, ball) {
         }
     }
 }
+
 
 // Draw ball
 function drawBall(ctx, ball) {
