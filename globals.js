@@ -135,14 +135,7 @@ const ball = {
     vz: 0   // Initial vertical velocity
 };
 
-// Function to update ball size based on y position for perspective effect
-function updateBallSize(ball, canvas) {
-    ball.width = 7;
-    ball.height = 7;
-}
 
-// Initialize ball size based on perspective
-updateBallSize(ball, canvas);
 
 // Initialize current player index
 let currentPlayerIndex = 0;

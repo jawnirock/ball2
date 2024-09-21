@@ -159,7 +159,6 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
         }
     }
     // Update ball size based on y position for perspective effect
-    updateBallSize(ball, canvas);
 }
 
 
