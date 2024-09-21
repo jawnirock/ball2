@@ -1,5 +1,7 @@
 // ai.js
 
+// ai.js
+
 const chasingPlayers = {
     a: [],
     b: []
@@ -39,9 +41,13 @@ function updateAIMovements(players, currentPlayerIndex, ball) {
     players.forEach((player, index) => {
         if (index !== currentPlayerIndex && player.canMove) { // Only apply AI behavior to unselected players who can move
             if (player.cooldown > 0) {
-                player.state = player.team === 'a' ? "a_idle" : "b_idle";
                 player.cooldown--;
-                return;
+                return; // Don't change state during cooldown
+            }
+
+            // If player is in the middle of kicking or passing, skip movement updates
+            if (player.state === "b_kicking" || player.state === "b_passing" || player.state === "a_kicking" || player.state === "a_passing") {
+                return; // Keep player in current state until action completes
             }
 
             // Determine the chase radius based on the player role
@@ -106,6 +112,8 @@ function updateAIMovements(players, currentPlayerIndex, ball) {
 
                     // *** Forward Shooting Logic ***
                     if (player.role === 'forward') {
+                        player.state = "b_kicking"; // Set AI player to kicking state
+
                         const goalX = 50;  // X position of the left goal for Team B (adjust this based on your field setup)
                         const goalY = canvas.height / 2;  // Y position of the center of the goal
 
@@ -124,12 +132,20 @@ function updateAIMovements(players, currentPlayerIndex, ball) {
                         ball.vy = ball.speed * 1.0 * (dy / distance);
                         ball.vz = 5;  // Give the shot some vertical height
 
+                        // Reset player state after kicking
+                        setTimeout(() => {
+                            player.state = "b_idle";
+                            player.canMove = true;
+                        }, 500);
+
                         // Apply cooldown after the shot
                         player.cooldown = 120;
                     }
 
                     // *** Defender and Midfielder Passing Logic ***
                     else {
+                        player.state = "b_passing"; // Set AI player to passing state
+
                         // Defenders try to pass to the closest midfielder
                         if (player.role === 'defender') {
                             ({ closestMidfielder: closestTeammate, closestDistance } = getClosestMidfielder(player, players));
@@ -155,6 +171,7 @@ function updateAIMovements(players, currentPlayerIndex, ball) {
                                 player.cooldown = 120;  // Apply cooldown to the player after the pass
                             } else {
                                 // If the teammate is too far, kick the ball forward
+                                player.state = "b_kicking"; // Set state to kicking
                                 ball.vx = -ball.speed * 1.0;  // Kick forward in the correct direction (toward the opponent's goal)
                                 ball.vy = 0;
                                 ball.vz = 5;  // Higher vertical height for a kick
@@ -162,11 +179,19 @@ function updateAIMovements(players, currentPlayerIndex, ball) {
                             }
                         } else {
                             // Default kick if no teammate is found
+                            player.state = "b_kicking"; // Set state to kicking
                             ball.vx = -ball.speed * 1.0;
                             ball.vy = 0;
                             ball.vz = 5;
                             player.cooldown = 120;  // Apply cooldown
                         }
+
+                        // Reset player state after passing or kicking
+                        setTimeout(() => {
+                            player.state = "b_idle";
+                            player.canMove = true;
+                        }, 500);
+
                     }
 
                     // Release ball control after the action
@@ -179,6 +204,7 @@ function updateAIMovements(players, currentPlayerIndex, ball) {
         }
     });
 }
+
 
 // Function to start chasing the ball
 function startChasing(player, ball) {
