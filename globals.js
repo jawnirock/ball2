@@ -6,7 +6,7 @@ const canvas = document.getElementById('soccerField');
 const ctx = canvas.getContext('2d');
 
 // Field dimensions
-const fieldWidth = canvas.width * 0.9;  // 90% of the canvas width
+const fieldWidth = canvas.width * 0.7;  // 70% of the canvas width
 const fieldHeight = 500; // Keep field height the same
 const canvasHeight = canvas.height;
 const canvasWidth = canvas.width; // Added canvasWidth to reference the full canvas width

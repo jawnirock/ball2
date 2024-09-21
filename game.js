@@ -98,18 +98,7 @@ function checkGoal() {
     }
 }
 
-// Function to reset players to their starting positions
-function resetPlayers() {
-    players.forEach((player, index) => {
-        player.x = startingPositions[index].x;
-        player.y = startingPositions[index].y;
-        player.canMove = true;
-        player.cooldown = 0;
-        player.direction = { x: 0, y: -1 };
-        updatePlayerSize(player, canvas); // Update player size based on perspective
-    });
-    currentPlayerIndex = getClosestPlayerToBall(); // Select closest player to the ball
-}
+
 
 // Function to get the closest player to the ball
 function getClosestPlayerToBall() {
@@ -149,8 +138,8 @@ function resetPlayers() {
 
 // Function to reset the ball to its starting position
 function resetBall() {
-    ball.x = fieldWidth / 2;
-    ball.y = fieldHeight / 2 + 70;
+    ball.x = fieldWidth / 2 + (canvasWidth - fieldWidth) / 2,  // Center of the field horizontally
+    ball.y = fieldHeight / 2 + (canvasHeight - fieldHeight) / 2,  // Center of the field vertically
     ball.vx = 0;
     ball.vy = 0;
     ball.z = 0;
