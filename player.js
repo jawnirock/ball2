@@ -16,14 +16,6 @@ function updatePlayer(player, keys, canvas, ball) {
         return;  // Prevent changing state while these actions are in progress
     }
 
-    if (!player.canMove) {
-        // Do NOT change to idle if player is in the middle of tackling
-        if (player.state !== "a_tackling" && player.state !== "b_tackling") {
-            player.state = player.team === "a" ? "a_idle" : "b_idle"; // Set to idle only if not tackling
-        }
-        return;
-    }
-
     const prevX = player.x;
     const prevY = player.y;
     let nextX = player.x;
@@ -45,12 +37,6 @@ function updatePlayer(player, keys, canvas, ball) {
     } else if (nextX > prevX) {
         player.state = player.team === "a" ? "a_running_right" : "b_running_right";
     }
-
-    // If player isn't moving, set to idle (but only if not tackling or tackled)
-    if (nextX === prevX && nextY === prevY && player.state !== "a_tackling" && player.state !== "b_tackling") {
-        player.state = player.team === "a" ? "a_idle" : "b_idle";
-    }
-
     // Update player size based on y position for perspective effect
     updatePlayerSize(player, canvas);
 
@@ -69,7 +55,6 @@ function freezePlayer(player, duration, freezeState) {
     setTimeout(() => {
         player.canMove = true;
         // Maintain state during freeze and only switch after freeze duration
-        player.state = freezeState === "a_tackling" || freezeState === "b_tackling" ? freezeState : player.team === 'a' ? "a_idle" : "b_idle";
     }, duration);
 }
 
