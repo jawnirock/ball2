@@ -136,12 +136,13 @@ function handleTackle(players, currentPlayerIndex, ball) {
             bPlayerInRange.state = "b_idle"; // Return tackled player to idle after being tackled
         }, 2000); // Tackled player is frozen for 2 seconds
 
-        // Release the ball if the tackled player had possession
+        // Only release and move the ball if the tackled player had possession
         if (ball.inControl === bPlayerInRange) {
-            ball.inControl = null; // Ball is released
+            ball.inControl = null; // Release the ball
             ball.vx = currentPlayer.direction.x * 2; // Ball velocity is set in the tackler's direction
             ball.vy = currentPlayer.direction.y * 2;
         }
+        // Else: If the tackled player does not have the ball, the ball remains as it is.
     }
 }
 
