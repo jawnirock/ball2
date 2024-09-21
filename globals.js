@@ -1,5 +1,9 @@
 // globals.js
 
+let freezeState = false;  // Tracks whether the game is frozen
+let freezeTimeout = null; // Stores the timeout reference for clearing later
+
+
 // Define global variables and objects
 
 const canvas = document.getElementById('soccerField');

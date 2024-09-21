@@ -73,7 +73,7 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
         if (isBallOutOfBounds(ball)) {
             if (!ballOutOfBounds) {
                 ballOutOfBounds = true;
-                handleBallOutOfBounds(ball);
+                handleBallOutOfBounds(ball, players);
             }
         } else {
             ballOutOfBounds = false;
@@ -147,18 +147,11 @@ function isBallOutOfBounds(ball) {
 }
 
 
-// Function to handle the ball going out of bounds
-// Function to handle the ball going out of bounds
 function handleBallOutOfBounds(ball, players) {
     const fieldYStart = (canvasHeight - fieldHeight) / 2;
     const fieldXStart = (canvasWidth - fieldWidth) / 2;
     const fieldCenterX = fieldXStart + fieldWidth / 2;
     const fieldCenterY = fieldYStart + fieldHeight / 2;
-
-    // Get the position the ball went out
-    const outOfBoundsX = ball.x;
-    const outOfBoundsY = ball.y;
-
 
     // If the ball is in control of a player, they lose possession
     if (ball.inControl) {
@@ -172,7 +165,6 @@ function handleBallOutOfBounds(ball, players) {
         // Apply a cooldown to prevent immediate control
         playerInControl.cooldown = 120;  // Apply 2-second cooldown (assuming 60 frames per second)
 
-
         // Freeze the player in idle state for 1.5 seconds
         playerInControl.state = playerInControl.team === 'a' ? 'a_idle' : 'b_idle';
         playerInControl.canMove = false; // Freeze player
@@ -182,11 +174,15 @@ function handleBallOutOfBounds(ball, players) {
         }, 1500);
     }
 
+    // Freeze all players and disable goals for 2 seconds
+    freezeState = true;
+    freezeAllPlayers(players, 2000);  // Correctly pass the players array here
+
     // After the player freezes and the ball is loose, throw the ball back into play
-    setTimeout(() => {
+    freezeTimeout = setTimeout(() => {
         // Calculate direction from the out-of-bounds point to the center
-        const directionX = fieldCenterX - outOfBoundsX;
-        const directionY = fieldCenterY - outOfBoundsY;
+        const directionX = fieldCenterX - ball.x;
+        const directionY = fieldCenterY - ball.y;
         const distance = Math.hypot(directionX, directionY);
 
         // Normalize the direction to get unit vector
@@ -199,8 +195,30 @@ function handleBallOutOfBounds(ball, players) {
         ball.vz = 3; // Add some vertical velocity for realism
         ball.inControl = null; // No player has control of the ball
 
-    }, 1500); // 1.5 second delay before the ball is thrown back
+        // Unfreeze the game and allow goals again
+        freezeState = false;
+
+    }, 2000); // 2-second delay before the ball is thrown back
 }
+
+
+
+function freezeAllPlayers(players, duration) {
+    // Freeze all players
+    players.forEach(player => {
+        player.state = player.team === 'a' ? 'a_idle' : 'b_idle';
+        player.canMove = false;  // Freeze player
+    });
+
+    setTimeout(() => {
+        players.forEach(player => {
+            player.canMove = true;  // Unfreeze player after the duration
+        });
+    }, duration);
+}
+
+
+
 
 
 function checkPlayerOutOfBounds(ball, players) {
