@@ -1,7 +1,17 @@
 // Ball physics constants
 const gravity = 0.2; // Gravity force
 const bounceFactor = 0.7; // Energy retained after bounce
+// Assuming these are global variables
+let fieldBounds = { left: 0, right: 0, top: 0, bottom: 0 };
+let ballOutOfBounds = false; // Keeps track of whether the ball is out of bounds
 
+// Call this function whenever you need to update field boundaries (e.g., after drawing the field)
+function updateFieldBounds(fieldXStart, fieldYStart, fieldWidth, fieldHeight) {
+    fieldBounds.left = fieldXStart;
+    fieldBounds.right = fieldXStart + fieldWidth;
+    fieldBounds.top = fieldYStart;
+    fieldBounds.bottom = fieldYStart + fieldHeight;
+}
 // Update ball position and handle player interaction
 function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
     if (ball.inControl) {
@@ -55,6 +65,16 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
         ball.z += ball.vz;
         ball.vz -= gravity;
 
+         // Check if the ball is out of bounds
+        if (isBallOutOfBounds(ball)) {
+            if (!ballOutOfBounds) {
+                ballOutOfBounds = true;
+                handleBallOutOfBounds(ball);
+            }
+        } else {
+            ballOutOfBounds = false;
+        }
+
         // Bounce off the ground
         if (ball.z < 0) {
             ball.z = 0;
@@ -107,6 +127,51 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
         handleTackle(players, currentPlayerIndex, ball);
     }
 }
+
+
+// Function to check if the ball is out of bounds
+function isBallOutOfBounds(ball) {
+    const fieldYStart = (canvasHeight - fieldHeight) / 2;
+    const fieldXStart = (canvasWidth - fieldWidth) / 2;
+
+    const ballOutLeft = ball.x < fieldXStart;
+    const ballOutRight = ball.x > fieldXStart + fieldWidth;
+    const ballOutTop = ball.y < fieldYStart;
+    const ballOutBottom = ball.y > fieldYStart + fieldHeight;
+
+    return ballOutLeft || ballOutRight || ballOutTop || ballOutBottom;
+}
+
+
+// Function to handle the ball going out of bounds
+function handleBallOutOfBounds(ball) {
+    const fieldYStart = (canvasHeight - fieldHeight) / 2;
+    const fieldXStart = (canvasWidth - fieldWidth) / 2;
+    const fieldCenterX = fieldXStart + fieldWidth / 2;
+    const fieldCenterY = fieldYStart + fieldHeight / 2;
+
+    // Get the position the ball went out
+    const outOfBoundsX = ball.x;
+    const outOfBoundsY = ball.y;
+
+    // Calculate direction from the out-of-bounds point to the center
+    const directionX = fieldCenterX - outOfBoundsX;
+    const directionY = fieldCenterY - outOfBoundsY;
+    const distance = Math.hypot(directionX, directionY);
+
+    // Normalize the direction to get unit vector
+    const normalizedDirectionX = directionX / distance;
+    const normalizedDirectionY = directionY / distance;
+
+    // Apply physics like a pass (set ball velocity towards the center)
+    setTimeout(() => {
+        ball.vx = ball.speed * 0.8 * normalizedDirectionX; // Simulate pass velocity
+        ball.vy = ball.speed * 0.8 * normalizedDirectionY;
+        ball.vz = 3; // Add some vertical velocity for realism
+        ball.inControl = null; // No player has control of the ball
+    }, 1500); // 1.5 second delay before the ball is thrown back
+}
+
 
 // Handle tackling logic
 function handleTackle(players, currentPlayerIndex, ball) {

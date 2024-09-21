@@ -11,13 +11,6 @@ const fieldHeight = 500; // Keep field height the same
 const canvasHeight = canvas.height;
 const canvasWidth = canvas.width; // Added canvasWidth to reference the full canvas width
 
-
-// Increased Perspective effect settings
-const topMargin = 200;
-const bottomMargin = 50;
-const fieldTopWidth = fieldWidth - 2 * topMargin;
-const fieldBottomWidth = fieldWidth - 2 * bottomMargin;
-
 // Goal line dimensions
 const goalLineWidth = 2; // 20% of the white line width
 const goalLineLength = 50; // Length of the goal line
