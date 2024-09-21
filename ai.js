@@ -43,37 +43,80 @@ function updateAIMovements(players, currentPlayerIndex, ball) {
                 return;
             }
 
-            // Logic for Team B defenders in control of the ball
-            if (ball.inControl === player && player.team === 'b' && player.role === 'defender') {
-                const { closestMidfielder, closestDistance } = getClosestMidfielder(player, players);
-                const maxPassDistance = 150;  // Define the max distance for a pass
-                
-                if (closestMidfielder) {
-                    // Calculate the direction towards the closest midfielder
-                    const dx = closestMidfielder.x - player.x;
-                    const dy = closestMidfielder.y - player.y;
 
-                    // If the closest midfielder is within passing distance
-                    if (closestDistance <= maxPassDistance) {
-                        // Normalize the direction and use the pass speed
-                        const distance = Math.hypot(dx, dy);
-                        ball.vx = ball.speed * 0.7 * (dx / distance);  // Mostly in X-axis but considers diagonal
-                        ball.vy = ball.speed * 0.7 * (dy / distance);  // Allows for vertical movement if needed
-                        ball.vz = 3;  // Pass has a moderate vertical arc
-                        ball.inControl = null;
-                        player.cooldown = 120;  // Prevent immediate actions after passing
-                    } else {
-                        // If no midfielder is close enough, defender kicks the ball along the X-axis
-                        ball.vx = ball.speed * 1.0 * Math.sign(dx);  // Kick in the X direction towards midfield
-                        ball.vy = 0;  // No vertical movement for the kick
-                        ball.vz = 5;  // Kick has a higher arc
-                        ball.inControl = null;
-                        player.cooldown = 120;  // Prevent immediate actions after kicking
-                    }
+            // If the player has control of the ball (Team B)
+            if (ball.inControl === player && player.team === 'b') {
+                // Ensure the cooldown only gets initialized once when the player first gains control
+                if (player.actionCooldown === null || player.actionCooldown === undefined) {
+                    console.log("Player has control, starting to move left.");  // Log when the player gets the ball
+                    player.actionCooldown = Math.floor(Math.random() * 30 + 30);  // Set a random cooldown for movement (0.5 to 1.5 seconds)
                 }
-                return;  // End movement updates once the defender has acted
+
+                // Move left while the cooldown is active
+                if (player.actionCooldown > 0) {
+                    player.x -= 0.7;  // Move the player left with speed 0.7
+                    console.log("Moving player left, remaining cooldown:", player.actionCooldown);  // Log movement
+                    player.actionCooldown--;  // Decrement the cooldown
+                    return;  // Exit until the cooldown finishes
+                }
+
+                // Once the cooldown expires, decide to pass or kick the ball
+                if (player.actionCooldown === 0) {
+                    console.log("Cooldown expired, deciding to pass or kick.");
+
+                    let closestTeammate, closestDistance;
+
+                    // If the player is a defender, look for the closest midfielder
+                    if (player.role === 'defender') {
+                        ({ closestMidfielder: closestTeammate, closestDistance } = getClosestMidfielder(player, players));
+                    }
+                    // If the player is a midfielder, look for the closest forward
+                    else if (player.role === 'midfielder') {
+                        ({ closestForward: closestTeammate, closestDistance } = getClosestForward(player, players));
+                    }
+
+                    const maxPassDistance = player.role === 'defender' ? 150 : 200;  // Set pass radius based on role
+
+                    // If there's a valid teammate nearby, attempt a pass
+                    if (closestTeammate) {
+                        const dx = closestTeammate.x - player.x;
+                        const dy = closestTeammate.y - player.y;
+                        const distance = Math.hypot(dx, dy);
+
+                        // If the teammate is close enough, pass the ball
+                        if (closestDistance <= maxPassDistance) {
+                            console.log(`Passing to closest ${player.role === 'defender' ? 'midfielder' : 'forward'}.`);
+                            ball.vx = ball.speed * 0.7 * (dx / distance);  // Pass based on direction to teammate
+                            ball.vy = ball.speed * 0.7 * (dy / distance);
+                            ball.vz = 3;  // Give some vertical height to the pass
+                            player.cooldown = 120;  // Apply cooldown to the player after the pass
+                        } else {
+                            // If the teammate is too far, kick the ball forward
+                            console.log("Teammate too far, kicking the ball.");
+                            ball.vx = -ball.speed * 1.0;  // Kick forward in the correct direction (toward the opponent's goal)
+                            ball.vy = 0;
+                            ball.vz = 5;  // Higher vertical height for a kick
+                            player.cooldown = 120;  // Apply cooldown after the kick
+                        }
+                    } else {
+                        // Default kick if no teammate is found
+                        console.log("No teammate found, kicking the ball.");
+                        ball.vx = -ball.speed * 1.0;
+                        ball.vy = 0;
+                        ball.vz = 5;
+                        player.cooldown = 120;  // Apply cooldown
+                    }
+
+                    // Release ball control after the action
+                    ball.inControl = null;  // Remove ball control from the player
+                    player.actionCooldown = null;  // Reset action cooldown for the next time the player gets the ball
+                    console.log("Action complete, resetting player state.");
+                }
+
+                return;  // Prevent further actions for this player until the action completes
             }
 
+            
             // Determine the chase radius based on the player role
             let chaseRadius = player.width * 6;
             if (player.role === 'midfielder') {
@@ -195,4 +238,22 @@ function getClosestMidfielder(player, players) {
 
     return { closestMidfielder, closestDistance };
 }
+
+function getClosestForward(player, players) {
+    let closestForward = null;
+    let closestDistance = Infinity;
+
+    players.forEach(p => {
+        if (p.team === player.team && p.role === 'forward') {
+            const distance = Math.hypot(p.x - player.x, p.y - player.y);
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestForward = p;
+            }
+        }
+    });
+
+    return { closestForward, closestDistance };
+}
+
 
