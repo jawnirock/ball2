@@ -21,6 +21,10 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
         ball.z = 0;
         ball.vz = 0;
 
+         // Check if the player in control is out of bounds
+        checkPlayerOutOfBounds(ball, players);
+
+
         if (keys.s && ball.inControl.team === 'a') {
             ball.inControl.state = "a_passing";  // Set state to passing
             ball.vx = ball.speed * 0.7 * ball.inControl.direction.x;
@@ -144,7 +148,8 @@ function isBallOutOfBounds(ball) {
 
 
 // Function to handle the ball going out of bounds
-function handleBallOutOfBounds(ball) {
+// Function to handle the ball going out of bounds
+function handleBallOutOfBounds(ball, players) {
     const fieldYStart = (canvasHeight - fieldHeight) / 2;
     const fieldXStart = (canvasWidth - fieldWidth) / 2;
     const fieldCenterX = fieldXStart + fieldWidth / 2;
@@ -154,23 +159,71 @@ function handleBallOutOfBounds(ball) {
     const outOfBoundsX = ball.x;
     const outOfBoundsY = ball.y;
 
-    // Calculate direction from the out-of-bounds point to the center
-    const directionX = fieldCenterX - outOfBoundsX;
-    const directionY = fieldCenterY - outOfBoundsY;
-    const distance = Math.hypot(directionX, directionY);
 
-    // Normalize the direction to get unit vector
-    const normalizedDirectionX = directionX / distance;
-    const normalizedDirectionY = directionY / distance;
+    // If the ball is in control of a player, they lose possession
+    if (ball.inControl) {
+        const playerInControl = ball.inControl;
+        
+        // Release the ball like in a tackle
+        ball.inControl = null; // Player loses possession
+        ball.vx = playerInControl.direction.x * 2; // Ball velocity based on player's direction
+        ball.vy = playerInControl.direction.y * 2;
+        
+        // Apply a cooldown to prevent immediate control
+        playerInControl.cooldown = 120;  // Apply 2-second cooldown (assuming 60 frames per second)
 
-    // Apply physics like a pass (set ball velocity towards the center)
+
+        // Freeze the player in idle state for 1.5 seconds
+        playerInControl.state = playerInControl.team === 'a' ? 'a_idle' : 'b_idle';
+        playerInControl.canMove = false; // Freeze player
+
+        setTimeout(() => {
+            playerInControl.canMove = true; // Unfreeze player after 1.5 seconds
+        }, 1500);
+    }
+
+    // After the player freezes and the ball is loose, throw the ball back into play
     setTimeout(() => {
+        // Calculate direction from the out-of-bounds point to the center
+        const directionX = fieldCenterX - outOfBoundsX;
+        const directionY = fieldCenterY - outOfBoundsY;
+        const distance = Math.hypot(directionX, directionY);
+
+        // Normalize the direction to get unit vector
+        const normalizedDirectionX = directionX / distance;
+        const normalizedDirectionY = directionY / distance;
+
+        // Apply physics like a pass (set ball velocity towards the center)
         ball.vx = ball.speed * 0.8 * normalizedDirectionX; // Simulate pass velocity
         ball.vy = ball.speed * 0.8 * normalizedDirectionY;
         ball.vz = 3; // Add some vertical velocity for realism
         ball.inControl = null; // No player has control of the ball
+
     }, 1500); // 1.5 second delay before the ball is thrown back
 }
+
+
+function checkPlayerOutOfBounds(ball, players) {
+    const fieldYStart = (canvasHeight - fieldHeight) / 2;
+    const fieldXStart = (canvasWidth - fieldWidth) / 2;
+    const fieldYEnd = fieldYStart + fieldHeight;
+    const fieldXEnd = fieldXStart + fieldWidth;
+
+
+    // If the ball is in control of a player, check if that player is out of bounds
+    if (ball.inControl) {
+        const player = ball.inControl;
+
+
+        // Check if the player is out of bounds
+        if (player.x < fieldXStart || player.x > fieldXEnd || player.y < fieldYStart || player.y > fieldYEnd) {
+            // Call handleBallOutOfBounds to handle losing possession and throwing the ball back in
+            handleBallOutOfBounds(ball, players);
+        }
+    } else {
+    }
+}
+
 
 
 // Handle tackling logic
