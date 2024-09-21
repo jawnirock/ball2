@@ -41,7 +41,48 @@ const keys = {
 
 
 // Player objects
+
 // globals.js
+
+const spriteImages = {
+    // Team A sprites
+    a_idle: new Image(),
+    a_running_left: new Image(),
+    a_running_right: new Image(),
+    a_kicking: new Image(),
+    a_passing: new Image(),
+    a_tackling: new Image(),
+    a_tackled: new Image(),
+    
+    // Team B sprites
+    b_idle: new Image(),
+    b_running_left: new Image(),
+    b_running_right: new Image(),
+    b_kicking: new Image(),
+    b_passing: new Image(),
+    b_tackling: new Image(),
+    b_tackled: new Image()
+};
+
+// Load images for Team A
+spriteImages.a_idle.src = 'images/a_idle.png';
+spriteImages.a_running_left.src = 'images/a_running_left.png';
+spriteImages.a_running_right.src = 'images/a_running_right.png';
+spriteImages.a_kicking.src = 'images/a_kicking.png';
+spriteImages.a_passing.src = 'images/a_passing.png';
+spriteImages.a_tackling.src = 'images/a_tackling.png';
+spriteImages.a_tackled.src = 'images/a_tackled.png';
+
+// Load images for Team B
+spriteImages.b_idle.src = 'images/b_idle.png';
+spriteImages.b_running_left.src = 'images/b_running_left.png';
+spriteImages.b_running_right.src = 'images/b_running_right.png';
+spriteImages.b_kicking.src = 'images/b_kicking.png';
+spriteImages.b_passing.src = 'images/b_passing.png';
+spriteImages.b_tackling.src = 'images/b_tackling.png';
+spriteImages.b_tackled.src = 'images/b_tackled.png';
+
+
 
 // Player objects
 const startingPositions = [
@@ -92,6 +133,7 @@ const startingPositions = [
 
 
 
+// Extend the players with a 'state' property
 const players = startingPositions.map((pos, index) => ({
     x: pos.x,
     y: pos.y,
@@ -102,8 +144,10 @@ const players = startingPositions.map((pos, index) => ({
     role: pos.role,
     direction: { x: 0, y: -1 },
     cooldown: 0,
-    canMove: true
+    canMove: true,
+    state: pos.team === "a" ? "a_idle" : "b_idle"  // Initial state is idle
 }));
+
 
 let lastSwitchedPlayerIndex = 0;
 

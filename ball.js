@@ -4,7 +4,6 @@
 const gravity = 0.2; // Gravity force
 const bounceFactor = 0.7; // Energy retained after bounce
 
-
 // Update ball position and handle player interaction
 function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
     if (ball.inControl) {
@@ -14,8 +13,9 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
         ball.z = 0;
         ball.vz = 0;
 
-        // Handle pass (throw)
+        // Handle pass (throw) - for Team A
         if (keys.s && ball.inControl.team === 'a') {
+            ball.inControl.state = "a_passing";
             ball.vx = ball.speed * 0.7 * ball.inControl.direction.x;
             ball.vy = ball.speed * 0.7 * ball.inControl.direction.y;
             ball.vz = 3;
@@ -24,8 +24,9 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
             lastSwitchedPlayerIndex = 0; // Reset the switch index when possession is lost
         }
 
-        // Handle kick
+        // Handle kick - for Team A
         if (keys.d && ball.inControl.team === 'a') {
+            ball.inControl.state = "a_kicking";
             ball.vx = ball.speed * 0.8 * ball.inControl.direction.x;
             ball.vy = ball.speed * 0.8 * ball.inControl.direction.y;
             ball.vz = 5;
@@ -33,40 +34,10 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
             ball.inControl = null;
             lastSwitchedPlayerIndex = 0; // Reset the switch index when possession is lost
         }
+
         // Handle tackle
         if (keys.a && !players.some(player => player.team === 'a' && ball.inControl === player)) {
-            const currentPlayer = players[currentPlayerIndex];
-
-            // Freeze and rotate the current player
-            if (!currentPlayer.rotated) {
-                currentPlayer.rotated = true;
-                currentPlayer.canMove = false;
-                setTimeout(() => {
-                    currentPlayer.rotated = false;
-                    currentPlayer.canMove = true;
-                }, 1000);
-            }
-
-            // Check if any B team player is within tackle range
-            const bPlayerInRange = players.find(player => player.team === 'b' && Math.hypot(player.x - currentPlayer.x, player.y - currentPlayer.y) < 40);
-
-            if (!bPlayerInRange) {
-            } else {
-                bPlayerInRange.rotated = true;
-                bPlayerInRange.canMove = false;
-                bPlayerInRange.cooldown = 200; // Increased cooldown period to ensure the player loses control
-                setTimeout(() => {
-                    bPlayerInRange.rotated = false;
-                    bPlayerInRange.canMove = true;
-                }, 2000);
-
-                if (ball.inControl === bPlayerInRange) {
-                    // Release the ball from the tackled player if they have it
-                    ball.inControl = null;
-                    ball.vx = currentPlayer.direction.x * 2;
-                    ball.vy = currentPlayer.direction.y * 2;
-                }
-            }
+            handleTackle(players, currentPlayerIndex, ball);
         }
 
     } else {
@@ -125,42 +96,46 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
 
     // Handle tackle
     if (keys.a && !players.some(player => player.team === 'a' && ball.inControl === player)) {
-        const currentPlayer = players[currentPlayerIndex];
-
-        // Freeze and rotate the current player
-        if (!currentPlayer.rotated) {
-            currentPlayer.rotated = true;
-            currentPlayer.canMove = false;
-            setTimeout(() => {
-                currentPlayer.rotated = false;
-                currentPlayer.canMove = true;
-            }, 1000);
-        }
-
-        // Check if any B team player is within tackle range
-        const bPlayerInRange = players.find(player => player.team === 'b' && Math.hypot(player.x - currentPlayer.x, player.y - currentPlayer.y) < 40);
-
-        if (!bPlayerInRange) {
-        } else {
-            bPlayerInRange.rotated = true;
-            bPlayerInRange.canMove = false;
-            bPlayerInRange.cooldown = 200; // Increased cooldown period to ensure the player loses control
-            setTimeout(() => {
-                bPlayerInRange.rotated = false;
-                bPlayerInRange.canMove = true;
-            }, 2000);
-
-            if (ball.inControl === bPlayerInRange) {
-                // Release the ball from the tackled player if they have it
-                ball.inControl = null;
-                ball.vx = currentPlayer.direction.x * 2;
-                ball.vy = currentPlayer.direction.y * 2;
-            }
-        }
+        handleTackle(players, currentPlayerIndex, ball);
     }
-    // Update ball size based on y position for perspective effect
 }
 
+// Handle tackling logic
+function handleTackle(players, currentPlayerIndex, ball) {
+    const currentPlayer = players[currentPlayerIndex];
+
+    // Freeze and rotate the current player
+    if (!currentPlayer.rotated) {
+        currentPlayer.state = currentPlayer.team === 'a' ? "a_tackling" : "b_tackling";
+        currentPlayer.rotated = true;
+        currentPlayer.canMove = false;
+        setTimeout(() => {
+            currentPlayer.rotated = false;
+            currentPlayer.canMove = true;
+        }, 1000);
+    }
+
+    // Check if any B team player is within tackle range
+    const bPlayerInRange = players.find(player => player.team === 'b' && Math.hypot(player.x - currentPlayer.x, player.y - currentPlayer.y) < 40);
+
+    if (bPlayerInRange) {
+        bPlayerInRange.state = "b_tackled";
+        bPlayerInRange.rotated = true;
+        bPlayerInRange.canMove = false;
+        bPlayerInRange.cooldown = 200;
+        setTimeout(() => {
+            bPlayerInRange.rotated = false;
+            bPlayerInRange.canMove = true;
+        }, 2000);
+
+        if (ball.inControl === bPlayerInRange) {
+            // Release the ball from the tackled player
+            ball.inControl = null;
+            ball.vx = currentPlayer.direction.x * 2;
+            ball.vy = currentPlayer.direction.y * 2;
+        }
+    }
+}
 
 // Draw ball
 function drawBall(ctx, ball) {
