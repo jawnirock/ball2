@@ -32,26 +32,36 @@ function drawField() {
     // Draw scores
     drawScores();
 }
+// Draw goal lines
 function drawGoalLines(fieldXStart, fieldYStart) {
     ctx.strokeStyle = '#FF0000'; // Red color for goal lines
-    ctx.lineWidth = goalLineWidth;
+    ctx.lineWidth = goalLineWidth; // Goal line width (modify this if needed)
 
     // Set goal positions at the center of each end line
-    const goalHeight = 100; // Example height for the goal
+    const goalHeight = 100; // Keep the current height of the goal
+    const goalWidth = 5;    // Set goal width to 5 units
+
     const goalStartY = fieldYStart + (fieldHeight - goalHeight) / 2;
 
-    // Left goal
+    // Left goal (adjust the width here)
     ctx.beginPath();
-    ctx.moveTo(fieldXStart, goalStartY);
-    ctx.lineTo(fieldXStart, goalStartY + goalHeight);
+    ctx.moveTo(fieldXStart - 5, goalStartY);  // Start at the left goal line
+    ctx.lineTo(fieldXStart - 5, goalStartY + goalHeight);  // Vertical line for the left goal
+    ctx.lineTo(fieldXStart - 5 + goalWidth, goalStartY + goalHeight);  // Extend horizontally 5 units
+    ctx.lineTo(fieldXStart - 5 + goalWidth, goalStartY);  // Complete the rectangle
+    ctx.closePath();
     ctx.stroke();
 
-    // Right goal
+    // Right goal (adjust the width here)
     ctx.beginPath();
-    ctx.moveTo(fieldXStart + fieldWidth, goalStartY);
-    ctx.lineTo(fieldXStart + fieldWidth, goalStartY + goalHeight);
+    ctx.moveTo(fieldXStart + 5 + fieldWidth, goalStartY);  // Start at the right goal line
+    ctx.lineTo(fieldXStart + 5 + fieldWidth, goalStartY + goalHeight);  // Vertical line for the right goal
+    ctx.lineTo(fieldXStart + 5 + fieldWidth - goalWidth, goalStartY + goalHeight);  // Extend horizontally 5 units
+    ctx.lineTo(fieldXStart + 5 + fieldWidth - goalWidth, goalStartY);  // Complete the rectangle
+    ctx.closePath();
     ctx.stroke();
 }
+
 
 function drawScores() {
     ctx.fillStyle = '#FFFFFF';
@@ -139,16 +149,16 @@ function resetPlayers() {
 
 // Function to reset the ball to its starting position
 function resetBall() {
-    ball.x = fieldWidth / 2 + (canvasWidth - fieldWidth) / 2;  // Center horizontally
-    ball.y = fieldHeight / 2 + (canvasHeight - fieldHeight) / 2;  // Center vertically
+    ball.x = fieldWidth / 2;
+    ball.y = fieldHeight / 2 + 70;
     ball.vx = 0;
     ball.vy = 0;
     ball.z = 0;
     ball.vz = 0;
-    ball.inControl = null;  // Release control of the ball
-    goalScored = false;  // Allow goals to be counted again
-    resetPlayers();  // Reset players to starting positions
-    initializeAIMovements(players, fieldWidth);  // Reinitialize AI movements
+    ball.inControl = null; // Release control of the ball
+    goalScored = false; // Allow goals to be counted again
+    resetPlayers(); // Reset players to starting positions
+    initializeAIMovements(players, fieldWidth); // Reinitialize AI movements
 }
 
 // Game loop
