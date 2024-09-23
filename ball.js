@@ -92,6 +92,29 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
                 ball.vz = 0;
             }
         }
+
+    // Bounce off the goal posts
+        const postSize = 5;
+        
+        // Check for left goal post collisions
+        if (
+            (Math.abs(ball.x - goalLeft.x) < postSize / 2) &&
+            ((Math.abs(ball.y - goalLeft.yTop) < postSize / 2) || (Math.abs(ball.y - goalLeft.yBottom) < postSize / 2))
+        ) {
+            ball.vx *= -1; // Reverse x velocity
+            ball.vy *= -1; // Reverse y velocity
+        }
+
+        // Check for right goal post collisions
+        if (
+            (Math.abs(ball.x - goalRight.x) < postSize / 2) &&
+            ((Math.abs(ball.y - goalRight.yTop) < postSize / 2) || (Math.abs(ball.y - goalRight.yBottom) < postSize / 2))
+        ) {
+            ball.vx *= -1; // Reverse x velocity
+            ball.vy *= -1; // Reverse y velocity
+        }
+
+
         // Bounce off the walls
         if (ball.x - ball.width / 2 < 0 || ball.x + ball.width / 2 > canvas.width) {
             ball.vx *= -1;
@@ -205,9 +228,6 @@ function handleBallOutOfBounds(ball, players) {
         }, 2000);
     }, 1500);
 }
-
-
-
 
 
 function freezeAllPlayers(players, duration) {

@@ -36,12 +36,14 @@ let goalLeft = { x: 0, yTop: 0, yBottom: 0 };
 let goalRight = { x: 0, yTop: 0, yBottom: 0 };
 const goalWidth = 5;  // 5px wide goal
 
+
 // Draw goal lines and store goal boundary positions
 function drawGoalLines(fieldXStart, fieldYStart) {
     ctx.strokeStyle = '#FF0000'; // Red color for goal lines
     ctx.lineWidth = goalWidth; // Set goal width to 5px
 
     const goalHeight = 100; 
+    const postSize = 5; // Size of the goal posts
     const goalStartY = fieldYStart + (fieldHeight - goalHeight) / 2;
 
     // Left goal
@@ -54,6 +56,11 @@ function drawGoalLines(fieldXStart, fieldYStart) {
     ctx.lineTo(goalLeft.x, goalLeft.yBottom);  
     ctx.stroke();
 
+    // Draw the posts for the left goal
+    ctx.fillStyle = '#000'; // Black color for posts
+    ctx.fillRect(goalLeft.x - postSize / 2, goalLeft.yTop - postSize / 2, postSize, postSize); // Top post
+    ctx.fillRect(goalLeft.x - postSize / 2, goalLeft.yBottom - postSize / 2, postSize, postSize); // Bottom post
+
     // Right goal
     goalRight.x = fieldXStart + fieldWidth;  // Store the x-position for goal detection
     goalRight.yTop = goalStartY;             // Store top y-position of the goal
@@ -63,7 +70,13 @@ function drawGoalLines(fieldXStart, fieldYStart) {
     ctx.moveTo(goalRight.x, goalRight.yTop);  
     ctx.lineTo(goalRight.x, goalRight.yBottom);  
     ctx.stroke();
+
+    // Draw the posts for the right goal
+    ctx.fillStyle = '#000'; // Black color for posts
+    ctx.fillRect(goalRight.x - postSize / 2, goalRight.yTop - postSize / 2, postSize, postSize); // Top post
+    ctx.fillRect(goalRight.x - postSize / 2, goalRight.yBottom - postSize / 2, postSize, postSize); // Bottom post
 }
+
 
 // Updated goal detection logic with immunity
 function checkGoal() {
