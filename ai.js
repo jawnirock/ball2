@@ -266,11 +266,15 @@ function tacklePlayer(tackler, targetPlayer) {
         rotateAndFreezePlayer(targetPlayer, 2000, targetPlayer.team === 'a' ? "a_idle" : "b_idle"); // Freeze for 2 seconds
         rotateAndFreezePlayer(tackler, 1000, tackler.team === 'a' ? "a_idle" : "b_idle"); // Freeze for 1 second
 
-        ball.inControl = null; // Ball gets loose
-        ball.vx = tackler.direction.x * 2;
-        ball.vy = tackler.direction.y * 2;
+        // Only change the ball's velocity if the target player is in control of the ball
+        if (ball.inControl === targetPlayer) {
+            ball.inControl = null; // Ball gets loose
+            ball.vx = tackler.direction.x * 2;
+            ball.vy = tackler.direction.y * 2;
+        }
     }
 }
+
 
 // Helper function to rotate and freeze a player
 function rotateAndFreezePlayer(player, duration, nextState) {

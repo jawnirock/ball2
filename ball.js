@@ -102,17 +102,13 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
             ball.y = Math.max(ball.height / 2, Math.min(canvas.height - ball.height / 2, ball.y));
         }
 
-        // Introduce a threshold for very small horizontal velocities
-        const stopThreshold = 0.2; // This threshold stops the ball when it's too slow
-
-        // Gradually reduce horizontal velocities (friction-like behavior)
+        // Slow down the ball gradually for both horizontal velocities
         ball.vx *= 0.98;
         ball.vy *= 0.98;
 
-        // Stop the ball completely if velocities are below the stop threshold
-        if (Math.abs(ball.vx) < stopThreshold) ball.vx = 0;
-        if (Math.abs(ball.vy) < stopThreshold) ball.vy = 0;
-
+        // Ensure the ball stops completely when the velocity is small enough
+        if (Math.abs(ball.vx) < 0.1) ball.vx = 0;
+        if (Math.abs(ball.vy) < 0.1) ball.vy = 0;
 
         // Fully stop the ball if all velocities are nearly zero
         if (ball.vx === 0 && ball.vy === 0 && ball.vz === 0) {
@@ -267,15 +263,15 @@ function handleTackle(players, currentPlayerIndex, ball) {
         currentPlayer.state = currentPlayer.team === 'a' ? "a_idle" : "b_idle"; // Return to idle after tackle
     }, 1000); // Freeze for 1 second
 
-    // Check if any B team player is within tackle range
-    const bPlayerInRange = players.find(player => player.team === 'b' && Math.hypot(player.x - currentPlayer.x, player.y - currentPlayer.y) < 40);
+    // Check if any opposing player is within tackle range
+    const bPlayerInRange = players.find(player => player.team !== currentPlayer.team && Math.hypot(player.x - currentPlayer.x, player.y - currentPlayer.y) < 40);
 
     if (bPlayerInRange) {
-        bPlayerInRange.state = "b_tackled"; // Set tackled state for the tackled player
+        bPlayerInRange.state = bPlayerInRange.team === 'a' ? "a_tackled" : "b_tackled"; // Set tackled state for the tackled player
         bPlayerInRange.canMove = false; // Freeze the tackled player
         setTimeout(() => {
             bPlayerInRange.canMove = true; // Unfreeze the tackled player after 2 seconds
-            bPlayerInRange.state = "b_idle"; // Return tackled player to idle after being tackled
+            bPlayerInRange.state = bPlayerInRange.team === 'a' ? "a_idle" : "b_idle"; // Return tackled player to idle after being tackled
         }, 2000); // Tackled player is frozen for 2 seconds
 
         // Only release and move the ball if the tackled player had possession
@@ -284,10 +280,8 @@ function handleTackle(players, currentPlayerIndex, ball) {
             ball.vx = currentPlayer.direction.x * 2; // Ball velocity is set in the tackler's direction
             ball.vy = currentPlayer.direction.y * 2;
         }
-        // Else: If the tackled player does not have the ball, the ball remains as it is.
     }
 }
-
 
 
 
