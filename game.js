@@ -32,36 +32,61 @@ function drawField() {
     // Draw scores
     drawScores();
 }
-// Draw goal lines
+let goalLeft = { x: 0, yTop: 0, yBottom: 0 };
+let goalRight = { x: 0, yTop: 0, yBottom: 0 };
+const goalWidth = 5;  // 5px wide goal
+
+// Draw goal lines and store goal boundary positions
 function drawGoalLines(fieldXStart, fieldYStart) {
     ctx.strokeStyle = '#FF0000'; // Red color for goal lines
-    ctx.lineWidth = goalLineWidth; // Goal line width (modify this if needed)
+    ctx.lineWidth = goalWidth; // Set goal width to 5px
 
-    // Set goal positions at the center of each end line
-    const goalHeight = 100; // Keep the current height of the goal
-    const goalWidth = 5;    // Set goal width to 5 units
-
+    const goalHeight = 100; 
     const goalStartY = fieldYStart + (fieldHeight - goalHeight) / 2;
 
-    // Left goal (adjust the width here)
+    // Left goal
+    goalLeft.x = fieldXStart;  // Store the x-position for goal detection
+    goalLeft.yTop = goalStartY;    // Store top y-position of the goal
+    goalLeft.yBottom = goalStartY + goalHeight; // Store bottom y-position of the goal
+
     ctx.beginPath();
-    ctx.moveTo(fieldXStart - 5, goalStartY);  // Start at the left goal line
-    ctx.lineTo(fieldXStart - 5, goalStartY + goalHeight);  // Vertical line for the left goal
-    ctx.lineTo(fieldXStart - 5 + goalWidth, goalStartY + goalHeight);  // Extend horizontally 5 units
-    ctx.lineTo(fieldXStart - 5 + goalWidth, goalStartY);  // Complete the rectangle
-    ctx.closePath();
+    ctx.moveTo(goalLeft.x, goalLeft.yTop);  
+    ctx.lineTo(goalLeft.x, goalLeft.yBottom);  
     ctx.stroke();
 
-    // Right goal (adjust the width here)
+    // Right goal
+    goalRight.x = fieldXStart + fieldWidth;  // Store the x-position for goal detection
+    goalRight.yTop = goalStartY;             // Store top y-position of the goal
+    goalRight.yBottom = goalStartY + goalHeight; // Store bottom y-position of the goal
+
     ctx.beginPath();
-    ctx.moveTo(fieldXStart + 5 + fieldWidth, goalStartY);  // Start at the right goal line
-    ctx.lineTo(fieldXStart + 5 + fieldWidth, goalStartY + goalHeight);  // Vertical line for the right goal
-    ctx.lineTo(fieldXStart + 5 + fieldWidth - goalWidth, goalStartY + goalHeight);  // Extend horizontally 5 units
-    ctx.lineTo(fieldXStart + 5 + fieldWidth - goalWidth, goalStartY);  // Complete the rectangle
-    ctx.closePath();
+    ctx.moveTo(goalRight.x, goalRight.yTop);  
+    ctx.lineTo(goalRight.x, goalRight.yBottom);  
     ctx.stroke();
 }
 
+// Updated goal detection logic with immunity
+function checkGoal() {
+    if (goalScored || ballImmunity) return; // Prevent goal detection during immunity or if a goal was already scored
+
+    const withinGoalY = (ball.y >= goalLeft.yTop && ball.y <= goalLeft.yBottom);
+
+    // Check if the ball touches the left side of the right goal (Team A scores)
+    if (withinGoalY && ball.x >= goalRight.x && ball.x <= goalRight.x + goalWidth) {
+        scoreTeamA++;
+        console.log("Goal for Team A!");
+        goalScored = true;
+        setTimeout(resetBall, 1000); // 1-second delay before resetting
+    }
+
+    // Check if the ball touches the right side of the left goal (Team B scores)
+    else if (withinGoalY && ball.x <= goalLeft.x && ball.x >= goalLeft.x - goalWidth) {
+        scoreTeamB++;
+        console.log("Goal for Team B!");
+        goalScored = true;
+        setTimeout(resetBall, 1000); // 1-second delay before resetting
+    }
+}
 
 function drawScores() {
     ctx.fillStyle = '#FFFFFF';
@@ -70,33 +95,10 @@ function drawScores() {
     ctx.fillText(`Team B: ${scoreTeamB}`, 10, 60);
 }
 
-// Updated goal detection logic
-function checkGoal() {
-    if (goalScored) return; // Prevent multiple goals from being counted during the delay
 
-    const fieldYStart = (canvasHeight - fieldHeight) / 2;
-    const fieldXStart = (canvasWidth - fieldWidth) / 2;
 
-    // Set goal positions
-    const goalHeight = 100; // Example height for the goal
-    const goalStartY = fieldYStart + (fieldHeight - goalHeight) / 2;
 
-    // Check if the ball is in the left goal (Team B scores)
-    if (ball.x < fieldXStart - ball.width / 2 && ball.y > goalStartY && ball.y < goalStartY + goalHeight) {
-        scoreTeamB++;
-        console.log("Goal for Team B!");
-        goalScored = true;
-        setTimeout(resetBall, 1000); // 1-second delay before resetting
-    }
 
-    // Check if the ball is in the right goal (Team A scores)
-    else if (ball.x > fieldXStart + fieldWidth + ball.width / 2 && ball.y > goalStartY && ball.y < goalStartY + goalHeight) {
-        scoreTeamA++;
-        console.log("Goal for Team A!");
-        goalScored = true;
-        setTimeout(resetBall, 1000); // 1-second delay before resetting
-    }
-}
 
 
 

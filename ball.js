@@ -4,6 +4,7 @@ const bounceFactor = 0.7; // Energy retained after bounce
 // Assuming these are global variables
 let fieldBounds = { left: 0, right: 0, top: 0, bottom: 0 };
 let ballOutOfBounds = false; // Keeps track of whether the ball is out of bounds
+let ballImmunity = false;  // Tracks if the ball has goal immunity (during throw-in)
 
 // Call this function whenever you need to update field boundaries (e.g., after drawing the field)
 function updateFieldBounds(fieldXStart, fieldYStart, fieldWidth, fieldHeight) {
@@ -147,59 +148,46 @@ function isBallOutOfBounds(ball) {
 }
 
 
+
+// Handle ball going out of bounds and throw it back in
 function handleBallOutOfBounds(ball, players) {
-    const fieldYStart = (canvasHeight - fieldHeight) / 2;
-    const fieldXStart = (canvasWidth - fieldWidth) / 2;
-    const fieldCenterX = fieldXStart + fieldWidth / 2;
-    const fieldCenterY = fieldYStart + fieldHeight / 2;
+    const fieldCenterX = fieldBounds.left + fieldWidth / 2;
+    const fieldCenterY = fieldBounds.top + fieldHeight / 2;
 
     // If the ball is in control of a player, they lose possession
     if (ball.inControl) {
         const playerInControl = ball.inControl;
-        
-        // Release the ball like in a tackle
-        ball.inControl = null; // Player loses possession
-        ball.vx = playerInControl.direction.x * 2; // Ball velocity based on player's direction
-        ball.vy = playerInControl.direction.y * 2;
-        
-        // Apply a cooldown to prevent immediate control
-        playerInControl.cooldown = 120;  // Apply 2-second cooldown (assuming 60 frames per second)
-
-        // Freeze the player in idle state for 1.5 seconds
+        ball.inControl = null;  // Player loses possession
+        playerInControl.cooldown = 120;  // Prevent the player from immediately regaining control
         playerInControl.state = playerInControl.team === 'a' ? 'a_idle' : 'b_idle';
-        playerInControl.canMove = false; // Freeze player
-
+        playerInControl.canMove = false;  // Freeze the player for 1.5 seconds
         setTimeout(() => {
-            playerInControl.canMove = true; // Unfreeze player after 1.5 seconds
+            playerInControl.canMove = true;  // Unfreeze the player after 1.5 seconds
         }, 1500);
     }
 
-    // Freeze all players and disable goals for 2 seconds
-    freezeState = true;
-    freezeAllPlayers(players, 2000);  // Correctly pass the players array here
-
-    // After the player freezes and the ball is loose, throw the ball back into play
-    freezeTimeout = setTimeout(() => {
-        // Calculate direction from the out-of-bounds point to the center
+    // Throw the ball back after 1.5 seconds
+    setTimeout(() => {
+        ballImmunity = true;  // Activate goal immunity for the ball
         const directionX = fieldCenterX - ball.x;
         const directionY = fieldCenterY - ball.y;
         const distance = Math.hypot(directionX, directionY);
-
-        // Normalize the direction to get unit vector
         const normalizedDirectionX = directionX / distance;
         const normalizedDirectionY = directionY / distance;
 
-        // Apply physics like a pass (set ball velocity towards the center)
-        ball.vx = ball.speed * 0.8 * normalizedDirectionX; // Simulate pass velocity
+        // Apply throw-in physics like a pass
+        ball.vx = ball.speed * 0.8 * normalizedDirectionX;
         ball.vy = ball.speed * 0.8 * normalizedDirectionY;
-        ball.vz = 3; // Add some vertical velocity for realism
-        ball.inControl = null; // No player has control of the ball
+        ball.vz = 3;  // Add some vertical velocity for realism
+        ball.inControl = null;
 
-        // Unfreeze the game and allow goals again
-        freezeState = false;
-
-    }, 2000); // 2-second delay before the ball is thrown back
+        // Deactivate goal immunity after 2 seconds
+        setTimeout(() => {
+            ballImmunity = false;  // Ball can trigger goals again
+        }, 2000);
+    }, 1500);
 }
+
 
 
 
