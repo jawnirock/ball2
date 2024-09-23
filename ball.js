@@ -83,9 +83,15 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
         // Bounce off the ground
         if (ball.z < 0) {
             ball.z = 0;
-            ball.vz *= -bounceFactor;
+            
+            // If the ball is moving vertically fast enough, it should bounce
+            if (Math.abs(ball.vz) > 0.5) {
+                ball.vz *= -bounceFactor; // Invert velocity for bounce and reduce it by the bounceFactor
+            } else {
+                // If the vertical velocity is too small, stop the bounce completely
+                ball.vz = 0;
+            }
         }
-
         // Bounce off the walls
         if (ball.x - ball.width / 2 < 0 || ball.x + ball.width / 2 > canvas.width) {
             ball.vx *= -1;
@@ -96,13 +102,25 @@ function updateBall(ball, players, currentPlayerIndex, keys, canvas) {
             ball.y = Math.max(ball.height / 2, Math.min(canvas.height - ball.height / 2, ball.y));
         }
 
-        // Slow down the ball gradually
+        // Introduce a threshold for very small horizontal velocities
+        const stopThreshold = 0.2; // This threshold stops the ball when it's too slow
+
+        // Gradually reduce horizontal velocities (friction-like behavior)
         ball.vx *= 0.98;
         ball.vy *= 0.98;
 
-        // Ensure the ball stops completely
-        if (Math.abs(ball.vx) < 0.1) ball.vx = 0;
-        if (Math.abs(ball.vy) < 0.1) ball.vy = 0;
+        // Stop the ball completely if velocities are below the stop threshold
+        if (Math.abs(ball.vx) < stopThreshold) ball.vx = 0;
+        if (Math.abs(ball.vy) < stopThreshold) ball.vy = 0;
+
+
+        // Fully stop the ball if all velocities are nearly zero
+        if (ball.vx === 0 && ball.vy === 0 && ball.vz === 0) {
+            // The ball is at rest, so stop applying any physics or updates to it
+            ball.vx = 0;
+            ball.vy = 0;
+            ball.vz = 0;
+        }
 
         // Check if any player reaches the ball
         players.forEach((player, index) => {
