@@ -172,6 +172,11 @@ function handleBallOutOfBounds(ball, players) {
     if (ball.inControl) {
         const playerInControl = ball.inControl;
         ball.inControl = null;  // Player loses possession
+
+        // Apply the player's direction as the ball's velocity, preserving movement
+        ball.vx = playerInControl.direction.x * 0.3 * ball.speed;
+        ball.vy = playerInControl.direction.y * 0.3 * ball.speed;
+        
         playerInControl.cooldown = 120;  // Prevent the player from immediately regaining control
         playerInControl.state = playerInControl.team === 'a' ? 'a_idle' : 'b_idle';
         playerInControl.canMove = false;  // Freeze the player for 1.5 seconds
@@ -180,20 +185,19 @@ function handleBallOutOfBounds(ball, players) {
         }, 1500);
     }
 
-    // Throw the ball back after 1.5 seconds
+    // Throw the ball back into the field after 1.5 seconds (if completely out)
     setTimeout(() => {
-        ballImmunity = true;  // Activate goal immunity for the ball
+        ballImmunity = true;  // Activate goal immunity for the ball to prevent goal from counting
         const directionX = fieldCenterX - ball.x;
         const directionY = fieldCenterY - ball.y;
         const distance = Math.hypot(directionX, directionY);
         const normalizedDirectionX = directionX / distance;
         const normalizedDirectionY = directionY / distance;
 
-        // Apply throw-in physics like a pass
+        // Ensure throw-in direction is smooth and not bouncing off a wall
         ball.vx = ball.speed * 0.8 * normalizedDirectionX;
         ball.vy = ball.speed * 0.8 * normalizedDirectionY;
         ball.vz = 3;  // Add some vertical velocity for realism
-        ball.inControl = null;
 
         // Deactivate goal immunity after 2 seconds
         setTimeout(() => {
@@ -201,6 +205,7 @@ function handleBallOutOfBounds(ball, players) {
         }, 2000);
     }, 1500);
 }
+
 
 
 
@@ -229,20 +234,18 @@ function checkPlayerOutOfBounds(ball, players) {
     const fieldYEnd = fieldYStart + fieldHeight;
     const fieldXEnd = fieldXStart + fieldWidth;
 
-
     // If the ball is in control of a player, check if that player is out of bounds
     if (ball.inControl) {
         const player = ball.inControl;
 
-
-        // Check if the player is out of bounds
+        // Check if the player is out of bounds (left or right side)
         if (player.x < fieldXStart || player.x > fieldXEnd || player.y < fieldYStart || player.y > fieldYEnd) {
-            // Call handleBallOutOfBounds to handle losing possession and throwing the ball back in
+            // Release ball and set its velocity in the player's current direction
             handleBallOutOfBounds(ball, players);
         }
-    } else {
     }
 }
+
 
 
 
