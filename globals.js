@@ -87,7 +87,7 @@ const startingPositions = [
     // Defenders
     { team: "a", role: "defender", x: fieldWidth * 0.153 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.25 + (canvasHeight - fieldHeight) / 2 },
     { team: "a", role: "defender", x: fieldWidth * 0.152 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.4 + (canvasHeight - fieldHeight) / 2 },
-    { team: "a", role: "defender", x: fieldWidth * 0.153 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.55 + (canvasHeight - fieldHeight) / 2 },
+    { team: "a", role: "defender", x: fieldWidth * 0.110 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.55 + (canvasHeight - fieldHeight) / 2 },
     { team: "a", role: "defender", x: fieldWidth * 0.155 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.7 + (canvasHeight - fieldHeight) / 2 },
     { team: "a", role: "defender", x: fieldWidth * 0.151 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.85 + (canvasHeight - fieldHeight) / 2 },
 
@@ -109,7 +109,7 @@ const startingPositions = [
     // Defenders
     { team: "b", role: "defender", x: fieldWidth * 0.852 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.25 + (canvasHeight - fieldHeight) / 2 },
     { team: "b", role: "defender", x: fieldWidth * 0.853 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.4 + (canvasHeight - fieldHeight) / 2 },
-    { team: "b", role: "defender", x: fieldWidth * 0.855 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.55 + (canvasHeight - fieldHeight) / 2 },
+    { team: "b", role: "defender", x: fieldWidth * 0.920 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.55 + (canvasHeight - fieldHeight) / 2 },
     { team: "b", role: "defender", x: fieldWidth * 0.854 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.7 + (canvasHeight - fieldHeight) / 2 },
     { team: "b", role: "defender", x: fieldWidth * 0.851 + (canvasWidth - fieldWidth) / 2, y: fieldHeight * 0.85 + (canvasHeight - fieldHeight) / 2 },
 

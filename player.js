@@ -84,7 +84,6 @@ function drawPlayer(ctx, player, isCurrentPlayer) {
 
     if (isCurrentPlayer) {
         drawArrow(ctx, player);
-        drawDirectionArrow(ctx, player);
     }
 
     ctx.restore();  // Restore the previous drawing state to avoid rotating other elements
@@ -105,18 +104,3 @@ function drawArrow(ctx, player) {
     ctx.fill();
 }
 
-// Draw a direction arrow to indicate the direction the player is moving
-function drawDirectionArrow(ctx, player) {
-    const arrowLength = 20;
-    const arrowWidth = 5;
-    const arrowX = player.x + player.direction.x * arrowLength;
-    const arrowY = player.y - player.height / 2 + player.direction.y * arrowLength;
-
-    ctx.fillStyle = '#FFD700'; // Gold color for the direction arrow
-    ctx.beginPath();
-    ctx.moveTo(arrowX, arrowY);
-    ctx.lineTo(arrowX - arrowWidth, arrowY - arrowWidth);
-    ctx.lineTo(arrowX + arrowWidth, arrowY - arrowWidth);
-    ctx.closePath();
-    ctx.fill();
-}

@@ -109,12 +109,6 @@ function drawScores() {
 }
 
 
-
-
-
-
-
-
 // Function to get the closest player to the ball
 function getClosestPlayerToBall() {
     const teamAPlayers = players.filter(player => player.team === 'a');
