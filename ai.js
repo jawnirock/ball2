@@ -12,8 +12,7 @@ function initializeAIMovements(players, fieldWidth) {
     players.forEach(player => {
         let targetX = player.x; // Default to the current position
 
-        if (player.role === 'forward' || player.role === 'midfielder') {
-            const additionalDistance = -50 + Math.random() * 300; // Random number from -100 to 100
+            const additionalDistance = -10 + Math.random() * 100; // Random number from -100 to 100
             if (player.role === 'forward') {
                 if (player.team === 'a') {
                     targetX += fieldWidth / 4 + additionalDistance; // Move right for Team A attackers
@@ -26,8 +25,13 @@ function initializeAIMovements(players, fieldWidth) {
                 } else if (player.team === 'b') {
                     targetX -= fieldWidth / 8 + additionalDistance; // Move left for Team B midfielders
                 }
+            } else if (player.role === 'defender') {
+                if (player.team === 'a') {
+                    targetX += fieldWidth / 70 + additionalDistance; // Move right for Team A midfielders
+                } else if (player.team === 'b') {
+                    targetX -= fieldWidth / 70 + additionalDistance; // Move left for Team B midfielders
+                }
             }
-        }
 
         // Set initial target positions
         player.targetX = targetX;
@@ -51,9 +55,9 @@ function updateAIMovements(players, currentPlayerIndex, ball) {
             }
 
             // Determine the chase radius based on the player role
-            let chaseRadius = player.width * 6;
+            let chaseRadius = player.width * 8;
             if (player.role === 'midfielder') {
-                chaseRadius = player.width * 8;
+                chaseRadius = player.width * 10;
             }
 
             // Determine if the player should chase the ball
